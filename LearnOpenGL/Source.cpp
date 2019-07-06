@@ -3,6 +3,9 @@
 #include<GLFW/glfw3.h>
 
 #include<iostream>
+#include<string>
+#include<fstream>
+#include<sstream>
 
 void initGLFW()
 {
@@ -22,6 +25,32 @@ void processInput(GLFWwindow* window)
 {
 	if (glfwGetKey(window, GLFW_KEY_ESCAPE) == GLFW_PRESS)//if it's not pressed, it returns GLFW_RELEASE
 		glfwSetWindowShouldClose(window, true);
+}
+
+//Function for reading a shader file given the path
+std::string ParseShader(const std::string& FilePath)
+{
+	std::ifstream Stream(FilePath);
+	std::string Line;
+	std::stringstream Code;
+	while (getline(Stream, Line))
+	{
+		Code << Line << "\n";
+	}
+
+	return Code.str();
+}
+
+void Check(unsigned int &Shader)
+{
+	GLint success;
+	char log[513];
+	glGetShaderiv(Shader, GL_COMPILE_STATUS, &success);
+	if (!success)
+	{
+		glGetShaderInfoLog(Shader, 513, NULL, log);
+		std::cout << "ERROR::SHADER::VERTEX::COMPILATION_FAILED\n" << log << std::endl;
+	}
 }
 int main()
 {
@@ -55,6 +84,30 @@ int main()
 	//register so the function so that it gets called everytime we resize the window
 	glfwSetFramebufferSizeCallback(window, framebuffer_size_callback);
 
+	float Vertices[] =
+	{
+		-0.5f, -0.5f, 0.0f,
+		 0.5f, -0.5f, 0.0f,
+		 0.0f,  0.5f, 0.0f
+	};
+	//define a vertex buffer object
+	unsigned int VertexBufferObjectID;
+	glGenBuffers(1, &VertexBufferObjectID);
+	//bind the Buffer to an buffer array
+	glBindBuffer(GL_ARRAY_BUFFER, VertexBufferObjectID);
+	// From that point on any buffer calls we make will be used to configure the currently bound buffer......
+
+	//copy the data from 'Vertices[]' to the current buffer
+	glBufferData(GL_ARRAY_BUFFER, sizeof(Vertices), Vertices, GL_STATIC_DRAW);
+
+	//shaders part
+	unsigned int VertexShader;
+	VertexShader = glCreateShader(GL_VERTEX_SHADER);
+	std::string VertexShaderCode = ParseShader("VertexShader.shader");
+	const char* temp = VertexShaderCode.c_str();
+	glShaderSource(VertexShader, 1, &temp, NULL);
+	glCompileShader(VertexShader);
+	Check(VertexShader);
 	//simple 'render loop' which keeps our window open until the user closes it and we put the rendering commands inside it.
 	while (!glfwWindowShouldClose(window))
 	{
