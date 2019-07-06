@@ -41,7 +41,7 @@ std::string ParseShader(const std::string& FilePath)
 	return Code.str();
 }
 
-void Check(unsigned int &Shader)
+void CheckShader(unsigned int &Shader)
 {
 	GLint success;
 	char log[513];
@@ -50,6 +50,18 @@ void Check(unsigned int &Shader)
 	{
 		glGetShaderInfoLog(Shader, 513, NULL, log);
 		std::cout << "ERROR::SHADER::VERTEX::COMPILATION_FAILED\n" << log << std::endl;
+	}
+}
+
+void CheckProgram(unsigned int& Program)
+{
+	GLint success;
+	char log[513];
+	glGetProgramiv(Program, GL_LINK_STATUS, &success);
+	if (!success)
+	{
+		glGetProgramInfoLog(success, 513, NULL, log);
+		std::cout << "Error in the Shader Program Liking\n" << log << std::endl;
 	}
 }
 int main()
@@ -100,14 +112,57 @@ int main()
 	//copy the data from 'Vertices[]' to the current buffer
 	glBufferData(GL_ARRAY_BUFFER, sizeof(Vertices), Vertices, GL_STATIC_DRAW);
 
-	//shaders part
+	//shaders part :
+	//Vertex Shader
 	unsigned int VertexShader;
 	VertexShader = glCreateShader(GL_VERTEX_SHADER);
 	std::string VertexShaderCode = ParseShader("VertexShader.shader");
-	const char* temp = VertexShaderCode.c_str();
-	glShaderSource(VertexShader, 1, &temp, NULL);
+	const char* VTemp = VertexShaderCode.c_str();
+	glShaderSource(VertexShader, 1, &VTemp, NULL);
 	glCompileShader(VertexShader);
-	Check(VertexShader);
+	CheckShader(VertexShader);
+
+	//Fragment Shader
+	unsigned int FragmentShader;
+	FragmentShader = glCreateShader(GL_FRAGMENT_SHADER);
+	std::string FragmentShaderCode = ParseShader("FragmentShader.shader");
+	const char* FTemp = FragmentShaderCode.c_str();
+	glShaderSource(FragmentShader, 1, &FTemp, NULL);
+	glCompileShader(FragmentShader);
+	CheckShader(FragmentShader);
+
+	//ShaderProgram
+	unsigned int ShaderProgram;
+	ShaderProgram = glCreateProgram();
+	glAttachShader(ShaderProgram, VertexShader);
+	glAttachShader(ShaderProgram, FragmentShader);
+	glLinkProgram(ShaderProgram);
+	CheckProgram(ShaderProgram);
+
+	//so every shader and rendering call will use Shader Program object after using it
+	glUseProgram(ShaderProgram);
+	
+	glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 3 * sizeof(float), (void*)0);
+	glEnableVertexAttribArray(0);
+
+	unsigned int VAO, VBO;
+	glGenVertexArrays(1, &VAO);
+
+	glGenBuffers(1, &VBO);
+	glBindBuffer(GL_ARRAY_BUFFER, VBO);
+	glBufferData(GL_ARRAY_BUFFER, 6 * sizeof(float), Vertices, GL_STATIC_DRAW);
+	//glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 3 * sizeof(float), (void*)0);
+	//glEnableVertexAttribArray(0);
+
+	// ..:: Initialization code (done once (unless your object frequently changes)) :: ..
+	glBindVertexArray(VAO);
+	glBindBuffer(GL_ARRAY_BUFFER, VAO);
+
+	//we no longer need the shaders
+	glDeleteShader(FragmentShader);
+	glDeleteShader(VertexShader);
+
+
 	//simple 'render loop' which keeps our window open until the user closes it and we put the rendering commands inside it.
 	while (!glfwWindowShouldClose(window))
 	{
@@ -118,6 +173,11 @@ int main()
 		glClearColor(0.2f, 0.3f, 0.3f, 1.0f);
 		glClear(GL_COLOR_BUFFER_BIT);
 
+		glUseProgram(ShaderProgram);
+		glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0);
+
+		glfwSwapBuffers(window);
+		glfwPollEvents();
 	}
 
 	//properly clean/delete all of GLFW's resources that were allocated

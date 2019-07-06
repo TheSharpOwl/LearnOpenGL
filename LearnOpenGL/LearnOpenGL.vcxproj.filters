@@ -29,5 +29,8 @@
     <None Include="VertexShader.shader">
       <Filter>Shaders</Filter>
     </None>
+    <None Include="FragmentShader.shader">
+      <Filter>Shaders</Filter>
+    </None>
   </ItemGroup>
 </Project>
