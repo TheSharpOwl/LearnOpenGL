@@ -53,7 +53,7 @@ static std::string ParseShader(const std::string& FilePath)
 	return Code.str();
 }
 
-static void CheckShader(unsigned int &Shader)
+static void CheckShader(const unsigned int &Shader)
 {
 	GLint Success;
 	char Log[513];
@@ -65,6 +65,20 @@ static void CheckShader(unsigned int &Shader)
 		std::cout << "Shader Error Comilation Failed\n" << Log << std::endl;
 	}
 }
+
+static void CheckProgram(const unsigned int& Program)
+{
+	GLint Success;
+	char Log[513];
+	glGetProgramiv(Program, GL_LINK_STATUS, &Success);
+	
+	if (!Success)
+	{
+		glGetProgramInfoLog(Program, 513, NULL, Log);
+		std::cout << "Error in the shader program \n" << Log << std::endl;
+	}
+}
+
 int main()
 {
 	
@@ -113,6 +127,17 @@ int main()
 	glShaderSource(FragmentShader, 1, &FragmentShaderCode, NULL);
 	glCompileShader(FragmentShader);
 	CheckShader(FragmentShader);
+
+	//Shader program part
+	unsigned int ShaderProgram = glCreateProgram();
+	glAttachShader(ShaderProgram, VertexShader);
+	glAttachShader(ShaderProgram, FragmentShader);
+	glLinkProgram(ShaderProgram);
+	CheckProgram(ShaderProgram);
+
+	//we don't need the shaders anymore
+	glDeleteShader(VertexShader);
+	glDeleteShader(FragmentShader);
 
 
 	return 0;
