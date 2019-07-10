@@ -39,6 +39,32 @@ static bool GLLogCall(const char* function, const char* file, int line)
 	}
 	return true;
 }
+
+static std::string ParseShader(const std::string& FilePath)
+{
+	std::ifstream Stream(FilePath);
+	std::string Line;
+	std::stringstream Code;
+	while (getline(Stream, Line))
+	{
+		Code << Line << "\n";
+	}
+
+	return Code.str();
+}
+
+static void CheckShader(unsigned int &Shader)
+{
+	GLint Success;
+	char Log[513];
+	glGetShaderiv(Shader, GL_COMPILE_STATUS, &Success);
+
+	if (!Success)
+	{
+		glGetShaderInfoLog(Shader, 513, NULL, Log);
+		std::cout << "Shader Error Comilation Failed\n" << Log << std::endl;
+	}
+}
 int main()
 {
 	
@@ -71,41 +97,23 @@ int main()
 	//register so the function so that it gets called everytime we resize the window
 	glfwSetFramebufferSizeCallback(window, framebuffer_size_callback);
 
-
-	//test
-	//defining a buffer using modern OpenGL
-	//use docs.gl for reference
-	float positions[] = {
-		-0.5f, -0.5f,
-		 0.0f,  0.5f,
-		0.5f, -0.5f
-	};
-	unsigned int buffer;//to store the buffer id
-	glGenBuffers(1, &buffer);//generate 1 buffer and store its ID in variable 'buffer'
-	glBindBuffer(GL_ARRAY_BUFFER, buffer);//bind buffer => select buffer, also the target is an array buffer and its id is stored in 'buffer'
-	glBufferData(GL_ARRAY_BUFFER, 6 * sizeof(float), positions, GL_STATIC_DRAW);
-
 	
+	//Vertex Shader Part
+	unsigned int VertexShader = glCreateShader(GL_VERTEX_SHADER);
+	std::string GetVertexShaderCode = ParseShader("VertexShader.shader");
+	const char* VertexShaderCode = GetVertexShaderCode.c_str();
+	glShaderSource(VertexShader, 1, &VertexShaderCode, NULL);
+	glCompileShader(VertexShader);
+	CheckShader(VertexShader);
 
-	/* Loop until the user closes the window */
-	while (!glfwWindowShouldClose(window))
-	{
-		/* Render here */
-		glClear(GL_COLOR_BUFFER_BIT);
+	//Fragment Shader Part
+	unsigned int FragmentShader = glCreateShader(GL_FRAGMENT_SHADER);
+	std::string GetFragmentShaderCode = ParseShader("FragmentShader.shader");
+	const char* FragmentShaderCode = GetFragmentShaderCode.c_str();
+	glShaderSource(FragmentShader, 1, &FragmentShaderCode, NULL);
+	glCompileShader(FragmentShader);
+	CheckShader(FragmentShader);
 
-		//Important : count is number of 'vertices' (pairs)
-		glDrawArrays(GL_TRIANGLES, 0, 3);//we use it because we don't have index buffer yet
 
-		while (GLenum error = glGetError())
-		{
-			std::cout << "[OpenGL Error] (" << error << ")" << std::endl;
-			return -1;
-		}
-		/* Swap front and back buffers */
-		glfwSwapBuffers(window);
-
-		/* Poll for and process events */
-		glfwPollEvents();
-	}
 	return 0;
 }
