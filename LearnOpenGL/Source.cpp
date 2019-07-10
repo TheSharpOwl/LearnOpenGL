@@ -71,70 +71,6 @@ int main()
 	//register so the function so that it gets called everytime we resize the window
 	glfwSetFramebufferSizeCallback(window, framebuffer_size_callback);
 
-<<<<<<< HEAD
-	float Vertices[] =
-	{
-		-0.5f, -0.5f, 0.0f,
-		 0.5f, -0.5f, 0.0f,
-		 0.0f,  0.5f, 0.0f
-	};
-	//define a vertex buffer object
-	unsigned int VertexBufferObjectID;
-	glGenBuffers(1, &VertexBufferObjectID);
-	//bind the Buffer to an buffer array
-	glBindBuffer(GL_ARRAY_BUFFER, VertexBufferObjectID);
-	// From that point on any buffer calls we make will be used to configure the currently bound buffer......
-
-	//copy the data from 'Vertices[]' to the current buffer
-	glBufferData(GL_ARRAY_BUFFER, sizeof(Vertices), Vertices, GL_STATIC_DRAW);
-
-	//shaders part :
-	//Vertex Shader
-	unsigned int VertexShader;
-	VertexShader = glCreateShader(GL_VERTEX_SHADER);
-	std::string VertexShaderCode = ParseShader("VertexShader.shader");
-	const char* VTemp = VertexShaderCode.c_str();
-	glShaderSource(VertexShader, 1, &VTemp, NULL);
-	glCompileShader(VertexShader);
-	CheckShader(VertexShader);
-
-	//Fragment Shader
-	unsigned int FragmentShader;
-	FragmentShader = glCreateShader(GL_FRAGMENT_SHADER);
-	std::string FragmentShaderCode = ParseShader("FragmentShader.shader");
-	const char* FTemp = FragmentShaderCode.c_str();
-	glShaderSource(FragmentShader, 1, &FTemp, NULL);
-	glCompileShader(FragmentShader);
-	CheckShader(FragmentShader);
-
-	//ShaderProgram
-	unsigned int ShaderProgram;
-	ShaderProgram = glCreateProgram();
-	glAttachShader(ShaderProgram, VertexShader);
-	glAttachShader(ShaderProgram, FragmentShader);
-	glLinkProgram(ShaderProgram);
-	CheckProgram(ShaderProgram);
-	
-	//we no longer need the shaders
-	glDeleteShader(FragmentShader);
-	glDeleteShader(VertexShader);
-
-	unsigned int VBO, VAO;
-	glGenVertexArrays(1, &VAO);
-	glGenBuffers(1, &VBO);
-
-	glBindVertexArray(VAO);
-
-	glBindBuffer(GL_ARRAY_BUFFER, VBO);
-	glBufferData(GL_ARRAY_BUFFER, sizeof(Vertices), Vertices, GL_STATIC_DRAW);
-
-	glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 3 * sizeof(float), (void*) 0 );
-	glEnableVertexAttribArray(0);
-
-	glBindBuffer(GL_ARRAY_BUFFER, 0);
-
-	glBindVertexArray(0);
-=======
 
 	//test
 	//defining a buffer using modern OpenGL
@@ -150,29 +86,15 @@ int main()
 	glBufferData(GL_ARRAY_BUFFER, 6 * sizeof(float), positions, GL_STATIC_DRAW);
 
 	
->>>>>>> 385c34b2cb791df7b2ad369f042fb4f723d2b2ed
 
 	/* Loop until the user closes the window */
 	while (!glfwWindowShouldClose(window))
 	{
-<<<<<<< HEAD
-		processInput(window);//definition is up there =)
-
-		glfwPollEvents();//checks if any events are triggered like input
-
-		glClearColor(0.2f, 0.3f, 0.3f, 1.0f);
-		glClear(GL_COLOR_BUFFER_BIT);
-
-		glUseProgram(ShaderProgram);
-		glBindVertexArray(VAO);
-		glDrawArrays(GL_TRIANGLES,0,3);
-=======
 		/* Render here */
 		glClear(GL_COLOR_BUFFER_BIT);
 
 		//Important : count is number of 'vertices' (pairs)
 		glDrawArrays(GL_TRIANGLES, 0, 3);//we use it because we don't have index buffer yet
->>>>>>> 385c34b2cb791df7b2ad369f042fb4f723d2b2ed
 
 		while (GLenum error = glGetError())
 		{
