@@ -139,6 +139,43 @@ int main()
 	glDeleteShader(VertexShader);
 	glDeleteShader(FragmentShader);
 
+	/*
+	Each vertex attribute takes its data from memory managed by a VBO and which VBO it takes its data from
+	(you can have multiple VBOs) is determined by the VBO currently bound to GL_ARRAY_BUFFER
+	 when calling glVertexAttribPointer. Since the previously defined VBO is still bound
+	before calling glVertexAttribPointer vertex attribute 0 is now associated with its vertex data.
+	*/
+	unsigned int VAO, VBO;
+	float Vertices[] =
+	{
+		-0.5f, -0.5f, 0.0f,
+		 0.5f, -0.5f, 0.0f,
+		 0.0f,  0.5f, 0.0f
+	};
+	glGenBuffers(1, &VBO);
+	glGenVertexArrays(1, &VAO);
+	glBindVertexArray(VAO);
+	glBindBuffer(GL_ARRAY_BUFFER, VBO);
+	glBufferData(GL_ARRAY_BUFFER, sizeof(Vertices), Vertices, GL_STATIC_DRAW);
+	//0 because layout (location = 0) in the shader
+	glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 3 * sizeof(float), (void*)0);
+	glEnableVertexAttribArray(0);
+
+	while (!glfwWindowShouldClose(window))
+	{
+		processInput(window);//definition is up there =)
+
+		glfwPollEvents();//checks if any events are triggered like input
+		glClearColor(0.2f, 0.3f, 0.3f, 1.0f);
+		glClear(GL_COLOR_BUFFER_BIT);
+
+		glUseProgram(ShaderProgram);
+		glBindVertexArray(VAO);
+		glDrawArrays(GL_TRIANGLES, 0, 3);
+
+		glfwSwapBuffers(window);
+		glfwPollEvents();
+	}
 
 	return 0;
 }
