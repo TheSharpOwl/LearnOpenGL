@@ -9,7 +9,8 @@
 
 void initGLFW()
 {
-	glfwInit();
+	if (!glfwInit())
+		exit(-1);
 	glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 3);
 	glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 3);
 	glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
@@ -28,29 +29,15 @@ void processInput(GLFWwindow* window)
 }
 
 //Function for reading a shader file given the path
-std::string ParseShader(const std::string& FilePath)
-{
-	std::ifstream Stream(FilePath);
-	std::string Line;
-	std::stringstream Code;
-	while (getline(Stream, Line))
-	{
-		Code << Line << "\n";
-	}
 
-	return Code.str();
-}
-
-void Check(unsigned int &Shader)
+static bool GLLogCall(const char* function, const char* file, int line)
 {
-	GLint success;
-	char log[513];
-	glGetShaderiv(Shader, GL_COMPILE_STATUS, &success);
-	if (!success)
+	while (GLenum error = glGetError())
 	{
-		glGetShaderInfoLog(Shader, 513, NULL, log);
-		std::cout << "ERROR::SHADER::VERTEX::COMPILATION_FAILED\n" << log << std::endl;
+		std::cout << "[OpenGL Error] (" << error << ") : " << function << " " << file << ":" << line << std::endl;
+		return false;
 	}
+	return true;
 }
 int main()
 {
@@ -84,6 +71,7 @@ int main()
 	//register so the function so that it gets called everytime we resize the window
 	glfwSetFramebufferSizeCallback(window, framebuffer_size_callback);
 
+<<<<<<< HEAD
 	float Vertices[] =
 	{
 		-0.5f, -0.5f, 0.0f,
@@ -100,28 +88,102 @@ int main()
 	//copy the data from 'Vertices[]' to the current buffer
 	glBufferData(GL_ARRAY_BUFFER, sizeof(Vertices), Vertices, GL_STATIC_DRAW);
 
-	//shaders part
+	//shaders part :
+	//Vertex Shader
 	unsigned int VertexShader;
 	VertexShader = glCreateShader(GL_VERTEX_SHADER);
 	std::string VertexShaderCode = ParseShader("VertexShader.shader");
-	const char* temp = VertexShaderCode.c_str();
-	glShaderSource(VertexShader, 1, &temp, NULL);
+	const char* VTemp = VertexShaderCode.c_str();
+	glShaderSource(VertexShader, 1, &VTemp, NULL);
 	glCompileShader(VertexShader);
-	Check(VertexShader);
-	//simple 'render loop' which keeps our window open until the user closes it and we put the rendering commands inside it.
+	CheckShader(VertexShader);
+
+	//Fragment Shader
+	unsigned int FragmentShader;
+	FragmentShader = glCreateShader(GL_FRAGMENT_SHADER);
+	std::string FragmentShaderCode = ParseShader("FragmentShader.shader");
+	const char* FTemp = FragmentShaderCode.c_str();
+	glShaderSource(FragmentShader, 1, &FTemp, NULL);
+	glCompileShader(FragmentShader);
+	CheckShader(FragmentShader);
+
+	//ShaderProgram
+	unsigned int ShaderProgram;
+	ShaderProgram = glCreateProgram();
+	glAttachShader(ShaderProgram, VertexShader);
+	glAttachShader(ShaderProgram, FragmentShader);
+	glLinkProgram(ShaderProgram);
+	CheckProgram(ShaderProgram);
+	
+	//we no longer need the shaders
+	glDeleteShader(FragmentShader);
+	glDeleteShader(VertexShader);
+
+	unsigned int VBO, VAO;
+	glGenVertexArrays(1, &VAO);
+	glGenBuffers(1, &VBO);
+
+	glBindVertexArray(VAO);
+
+	glBindBuffer(GL_ARRAY_BUFFER, VBO);
+	glBufferData(GL_ARRAY_BUFFER, sizeof(Vertices), Vertices, GL_STATIC_DRAW);
+
+	glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 3 * sizeof(float), (void*) 0 );
+	glEnableVertexAttribArray(0);
+
+	glBindBuffer(GL_ARRAY_BUFFER, 0);
+
+	glBindVertexArray(0);
+=======
+
+	//test
+	//defining a buffer using modern OpenGL
+	//use docs.gl for reference
+	float positions[] = {
+		-0.5f, -0.5f,
+		 0.0f,  0.5f,
+		0.5f, -0.5f
+	};
+	unsigned int buffer;//to store the buffer id
+	glGenBuffers(1, &buffer);//generate 1 buffer and store its ID in variable 'buffer'
+	glBindBuffer(GL_ARRAY_BUFFER, buffer);//bind buffer => select buffer, also the target is an array buffer and its id is stored in 'buffer'
+	glBufferData(GL_ARRAY_BUFFER, 6 * sizeof(float), positions, GL_STATIC_DRAW);
+
+	
+>>>>>>> 385c34b2cb791df7b2ad369f042fb4f723d2b2ed
+
+	/* Loop until the user closes the window */
 	while (!glfwWindowShouldClose(window))
 	{
+<<<<<<< HEAD
 		processInput(window);//definition is up there =)
 
-		glfwSwapBuffers(window);
 		glfwPollEvents();//checks if any events are triggered like input
+
 		glClearColor(0.2f, 0.3f, 0.3f, 1.0f);
 		glClear(GL_COLOR_BUFFER_BIT);
 
+		glUseProgram(ShaderProgram);
+		glBindVertexArray(VAO);
+		glDrawArrays(GL_TRIANGLES,0,3);
+=======
+		/* Render here */
+		glClear(GL_COLOR_BUFFER_BIT);
+
+		//Important : count is number of 'vertices' (pairs)
+		glDrawArrays(GL_TRIANGLES, 0, 3);//we use it because we don't have index buffer yet
+>>>>>>> 385c34b2cb791df7b2ad369f042fb4f723d2b2ed
+
+		while (GLenum error = glGetError())
+		{
+			std::cout << "[OpenGL Error] (" << error << ")" << std::endl;
+			return -1;
+		}
+		/* Swap front and back buffers */
+		glfwSwapBuffers(window);
+
+		/* Poll for and process events */
+		glfwPollEvents();
 	}
-
-	//properly clean/delete all of GLFW's resources that were allocated
-	glfwTerminate();
-
 	return 0;
 }
