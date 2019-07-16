@@ -7,6 +7,8 @@
 #include<fstream>
 #include<sstream>
 
+#include<Shader.h>
+
 void initGLFW()
 {
 	if (!glfwInit())
@@ -38,45 +40,6 @@ static bool GLLogCall(const char* function, const char* file, int line)
 		return false;
 	}
 	return true;
-}
-
-static std::string ParseShader(const std::string& FilePath)
-{
-	std::ifstream Stream(FilePath);
-	std::string Line;
-	std::stringstream Code;
-	while (getline(Stream, Line))
-	{
-		Code << Line << "\n";
-	}
-
-	return Code.str();
-}
-
-static void CheckShader(const unsigned int &Shader)
-{
-	GLint Success;
-	char Log[513];
-	glGetShaderiv(Shader, GL_COMPILE_STATUS, &Success);
-
-	if (!Success)
-	{
-		glGetShaderInfoLog(Shader, 513, NULL, Log);
-		std::cout << "Shader Error Comilation Failed\n" << Log << std::endl;
-	}
-}
-
-static void CheckProgram(const unsigned int& Program)
-{
-	GLint Success;
-	char Log[513];
-	glGetProgramiv(Program, GL_LINK_STATUS, &Success);
-	
-	if (!Success)
-	{
-		glGetProgramInfoLog(Program, 513, NULL, Log);
-		std::cout << "Error in the shader program \n" << Log << std::endl;
-	}
 }
 
 int main()
@@ -111,33 +74,7 @@ int main()
 	//register so the function so that it gets called everytime we resize the window
 	glfwSetFramebufferSizeCallback(window, framebuffer_size_callback);
 
-	
-	//Vertex Shader Part
-	unsigned int VertexShader = glCreateShader(GL_VERTEX_SHADER);
-	std::string GetVertexShaderCode = ParseShader("VertexShader.shader");
-	const char* VertexShaderCode = GetVertexShaderCode.c_str();
-	glShaderSource(VertexShader, 1, &VertexShaderCode, NULL);
-	glCompileShader(VertexShader);
-	CheckShader(VertexShader);
-
-	//Fragment Shader Part
-	unsigned int FragmentShader = glCreateShader(GL_FRAGMENT_SHADER);
-	std::string GetFragmentShaderCode = ParseShader("FragmentShader.shader");
-	const char* FragmentShaderCode = GetFragmentShaderCode.c_str();
-	glShaderSource(FragmentShader, 1, &FragmentShaderCode, NULL);
-	glCompileShader(FragmentShader);
-	CheckShader(FragmentShader);
-
-	//Shader program part
-	unsigned int ShaderProgram = glCreateProgram();
-	glAttachShader(ShaderProgram, VertexShader);
-	glAttachShader(ShaderProgram, FragmentShader);
-	glLinkProgram(ShaderProgram);
-	CheckProgram(ShaderProgram);
-
-	//we don't need the shaders anymore
-	glDeleteShader(VertexShader);
-	glDeleteShader(FragmentShader);
+	Shader OurShader("VertexShader.shader", "FragmentShader.shader");
 
 	/*
 	Each vertex attribute takes its data from memory managed by a VBO and which VBO it takes its data from
@@ -186,7 +123,7 @@ int main()
 		glClearColor(0.2f, 0.3f, 0.3f, 1.0f);
 		glClear(GL_COLOR_BUFFER_BIT);
 
-		glUseProgram(ShaderProgram);
+		OurShader.Use();
 		glBindVertexArray(VAO);
 		glDrawElements(GL_TRIANGLES, 3, GL_UNSIGNED_INT, 0);
 		
