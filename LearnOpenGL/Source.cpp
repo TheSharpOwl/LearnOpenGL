@@ -78,7 +78,7 @@ int main()
 	//register so the function so that it gets called everytime we resize the window
 	glfwSetFramebufferSizeCallback(window, framebuffer_size_callback);
 
-	Shader OurShader("VertexShader.shader", "FragmentShader.shader");
+	Shader OurShader("VertexShader.glsl", "FragmentShader.glsl");
 
 	/*
 	Each vertex attribute takes its data from memory managed by a VBO and which VBO it takes its data from
