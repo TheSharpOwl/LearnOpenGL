@@ -94,6 +94,7 @@ int main()
 	glGenTextures(1, &Texture);
 	glBindTexture(GL_TEXTURE_2D, Texture);
 
+
 	//set the texture wrapping/filtering options on the current bound texture object
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
@@ -101,9 +102,10 @@ int main()
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
 
 	//Adding the image:
+	//Note image has 0.0 on the top of y-axis while OpenGL expects it to be at the bottom so we have to flip this one 
+	stbi_set_flip_vertically_on_load(true);//flip any image you'll load
 	int Width, Height, NRChannels;
 	unsigned char* Data = stbi_load("container.jpg", &Width, &Height, &NRChannels, 0);
-	
 	if (Data)
 	{
 		glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, Width, Height, 0, GL_RGB, GL_UNSIGNED_BYTE, Data);
@@ -116,7 +118,28 @@ int main()
 	//free the memory
 	stbi_image_free(Data);
 
+	//texture 2
+	unsigned int Texture2;
+	glGenTextures(1, &Texture2);
+	glBindTexture(GL_TEXTURE_2D, Texture2);
 
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+
+	//the second image
+	unsigned char* Data2 = stbi_load("awesomeface.png", &Width, &Height, &NRChannels, 0);
+	if (Data2)
+	{
+		glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, Width, Height, 0, GL_RGBA, GL_UNSIGNED_BYTE, Data2);
+		glGenerateMipmap(GL_TEXTURE_2D);
+	}
+	else
+	{
+		std::cout << "Failed to load texture" << std::endl;
+	}
+	stbi_image_free(Data2);
 
 	float Vertices[] =
 	{	//postions			//colors			//texture coords
@@ -152,6 +175,11 @@ int main()
 	glVertexAttribPointer(2, 2, GL_FLOAT, GL_FALSE, 8 * sizeof(float), (void*)(6 * sizeof(float)));
 	glEnableVertexAttribArray(2);
 
+	OurShader.Use();//we should activate/use the shader before setting the uniforms
+	//both lines do the same to textures but done it differently for each texture for educational purpose
+	glUniform1i(glGetUniformLocation(OurShader.ID, "texture1"), 0);
+	OurShader.SetInt("texture2", 1);
+
 	while (!glfwWindowShouldClose(window))
 	{
 		processInput(window);//definition is up there =)
@@ -160,8 +188,10 @@ int main()
 		glClearColor(0.2f, 0.3f, 0.3f, 1.0f);
 		glClear(GL_COLOR_BUFFER_BIT);
 
+		glActiveTexture(GL_TEXTURE0);//we can remove this line because some drivers have it activated by default (0 only)
 		glBindTexture(GL_TEXTURE_2D, Texture);
-
+		glActiveTexture(GL_TEXTURE1);
+		glBindTexture(GL_TEXTURE_2D, Texture2);
 		OurShader.Use();
 		glBindVertexArray(VAO);
 		glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0);
