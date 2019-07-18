@@ -27,12 +27,8 @@ void framebuffer_size_callback(GLFWwindow* window, int width, int height)
 	glViewport(0, 0, width, height);
 }
 
-//if we press the escape key set the 'should close' to true so the window will close
-void processInput(GLFWwindow* window)
-{
-	if (glfwGetKey(window, GLFW_KEY_ESCAPE) == GLFW_PRESS)//if it's not pressed, it returns GLFW_RELEASE
-		glfwSetWindowShouldClose(window, true);
-}
+void processInput(GLFWwindow* window);
+
 
 //Function for reading a shader file given the path
 
@@ -45,6 +41,8 @@ static bool GLLogCall(const char* function, const char* file, int line)
 	}
 	return true;
 }
+
+float Mix;
 
 int main()
 {
@@ -96,8 +94,8 @@ int main()
 
 
 	//set the texture wrapping/filtering options on the current bound texture object
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
 
@@ -129,7 +127,7 @@ int main()
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
 
 	//the second image
-	unsigned char* Data2 = stbi_load("awesomeface.png", &Width, &Height, &NRChannels, 0);
+	unsigned char* Data2 = stbi_load("650833.png", &Width, &Height, &NRChannels, 0);
 	if (Data2)
 	{
 		glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, Width, Height, 0, GL_RGBA, GL_UNSIGNED_BYTE, Data2);
@@ -192,6 +190,9 @@ int main()
 		glBindTexture(GL_TEXTURE_2D, Texture);
 		glActiveTexture(GL_TEXTURE1);
 		glBindTexture(GL_TEXTURE_2D, Texture2);
+
+		OurShader.SetFloat("MixValue", Mix);
+
 		OurShader.Use();
 		glBindVertexArray(VAO);
 		glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0);
@@ -206,4 +207,22 @@ int main()
 
 	glfwTerminate();
 	return 0;
+}
+//if we press the escape key set the 'should close' to true so the window will close
+void processInput(GLFWwindow* window)
+{
+	if (glfwGetKey(window, GLFW_KEY_ESCAPE) == GLFW_PRESS)//if it's not pressed, it returns GLFW_RELEASE
+		glfwSetWindowShouldClose(window, true);
+	else if (glfwGetKey(window, GLFW_KEY_UP) == GLFW_PRESS)
+	{
+		Mix += 0.001f;
+		if (Mix >= 1.f)
+			Mix = 1.f;
+	}
+	else if (glfwGetKey(window, GLFW_KEY_DOWN) == GLFW_PRESS)
+	{
+		Mix -= 0.001f;
+		if (Mix <= 0.f)
+			Mix = 0.f;
+	}
 }
