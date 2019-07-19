@@ -1,6 +1,9 @@
 //always make sure to include glad before glfw
 #include<glad/glad.h>
 #include<GLFW/glfw3.h>
+#include<glm/glm.hpp>
+#include<glm/gtc/matrix_transform.hpp>
+#include<glm/gtc/type_ptr.hpp>
 
 #include<iostream>
 #include<string>
@@ -192,6 +195,14 @@ int main()
 		glBindTexture(GL_TEXTURE_2D, Texture2);
 
 		OurShader.SetFloat("MixValue", Mix);
+
+		//do a transformation
+		glm::mat4 Trans = glm::mat4(1.f);
+		Trans = glm::translate(Trans, glm::vec3(0.3f, -0.3f, 0.0f));
+		Trans = glm::rotate(Trans, (float)glfwGetTime(), glm::vec3(0.f, 0.f, 1.f));
+		unsigned int TransformLoc = glGetUniformLocation(OurShader.ID, "transform");
+		//3rd argument if we want to transpose it, 4th the data but we transform it so it'll be appropirate for OpenGL
+		glUniformMatrix4fv(TransformLoc, 1, GL_FALSE, glm::value_ptr(Trans));
 
 		OurShader.Use();
 		glBindVertexArray(VAO);
