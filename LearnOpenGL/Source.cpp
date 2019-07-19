@@ -200,9 +200,8 @@ int main()
 		glm::mat4 Trans = glm::mat4(1.f);
 		Trans = glm::translate(Trans, glm::vec3(0.3f, -0.3f, 0.0f));
 		Trans = glm::rotate(Trans, (float)glfwGetTime(), glm::vec3(0.f, 0.f, 1.f));
-		unsigned int TransformLoc = glGetUniformLocation(OurShader.ID, "transform");
-		//3rd argument if we want to transpose it, 4th the data but we transform it so it'll be appropirate for OpenGL
-		glUniformMatrix4fv(TransformLoc, 1, GL_FALSE, glm::value_ptr(Trans));
+
+		OurShader.SetMat4("transform", Trans);
 
 		OurShader.Use();
 		glBindVertexArray(VAO);
