@@ -181,6 +181,19 @@ int main()
 	glUniform1i(glGetUniformLocation(OurShader.ID, "texture1"), 0);
 	OurShader.SetInt("texture2", 1);
 
+
+	//Coordinate system :
+	glm::mat4 model = glm::mat4(1.0f);
+	model = glm::rotate(model, glm::radians(-55.f), glm::vec3(1.f, 0.f, 0.f));
+
+	glm::mat4 view = glm::mat4(1.f);
+	//transalting the scene in the opposite direction of where we wanna move
+	view = glm::translate(view, glm::vec3(0.f, 0.f, -3.f));
+
+	glm::mat4 projection;
+	projection = glm::perspective(glm::radians(45.f), float(Width) / float(Height), 0.1f, 100.f);
+
+
 	while (!glfwWindowShouldClose(window))
 	{
 		processInput(window);//definition is up there =)
@@ -202,6 +215,14 @@ int main()
 		Trans = glm::rotate(Trans, (float)glfwGetTime(), glm::vec3(0.f, 0.f, 1.f));
 
 		OurShader.SetMat4("transform", Trans);
+		int ModelLoc = glGetUniformLocation(OurShader.ID, "model");
+		glUniformMatrix4fv(ModelLoc, 1, GL_FALSE, glm::value_ptr(model));
+
+		int ViewLoc = glGetUniformLocation(OurShader.ID, "view");
+		glUniformMatrix4fv(ViewLoc, 1, GL_FALSE, glm::value_ptr(view));
+
+		int ProjectionLoc = glGetUniformLocation(OurShader.ID, "projection");
+		glUniformMatrix4fv(ProjectionLoc, 1, GL_FALSE, glm::value_ptr(projection));
 
 		OurShader.Use();
 		glBindVertexArray(VAO);
