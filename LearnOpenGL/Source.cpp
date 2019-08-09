@@ -142,13 +142,53 @@ int main()
 	}
 	stbi_image_free(Data2);
 
+	glEnable(GL_DEPTH_TEST);
+
 	float Vertices[] =
-	{	//postions			//colors			//texture coords
-		0.5f, 0.5f, 0.0f,	1.f, 0.f, 0.f,		1.0f, 1.0f,
-	   0.5f, -0.5f, 0.0f,  0.f, 1.f, 0.f,		1.0f, 0.0f,
-		-0.5,  -0.5f, 0.0f,  0.0f, 0.0f, 1.0f,	0.0f, 0.0f,
-		-0.5f, 0.5f, 0.0f,  1.0f, 1.0f, 0.0f,   0.0f, 1.0f
+	{	
+		 -0.5f, -0.5f, -0.5f,  0.0f, 0.0f,
+		 0.5f, -0.5f, -0.5f,  1.0f, 0.0f,
+		 0.5f,  0.5f, -0.5f,  1.0f, 1.0f,
+		 0.5f,  0.5f, -0.5f,  1.0f, 1.0f,
+		-0.5f,  0.5f, -0.5f,  0.0f, 1.0f,
+		-0.5f, -0.5f, -0.5f,  0.0f, 0.0f,
+
+		-0.5f, -0.5f,  0.5f,  0.0f, 0.0f,
+		 0.5f, -0.5f,  0.5f,  1.0f, 0.0f,
+		 0.5f,  0.5f,  0.5f,  1.0f, 1.0f,
+		 0.5f,  0.5f,  0.5f,  1.0f, 1.0f,
+		-0.5f,  0.5f,  0.5f,  0.0f, 1.0f,
+		-0.5f, -0.5f,  0.5f,  0.0f, 0.0f,
+
+		-0.5f,  0.5f,  0.5f,  1.0f, 0.0f,
+		-0.5f,  0.5f, -0.5f,  1.0f, 1.0f,
+		-0.5f, -0.5f, -0.5f,  0.0f, 1.0f,
+		-0.5f, -0.5f, -0.5f,  0.0f, 1.0f,
+		-0.5f, -0.5f,  0.5f,  0.0f, 0.0f,
+		-0.5f,  0.5f,  0.5f,  1.0f, 0.0f,
+
+		 0.5f,  0.5f,  0.5f,  1.0f, 0.0f,
+		 0.5f,  0.5f, -0.5f,  1.0f, 1.0f,
+		 0.5f, -0.5f, -0.5f,  0.0f, 1.0f,
+		 0.5f, -0.5f, -0.5f,  0.0f, 1.0f,
+		 0.5f, -0.5f,  0.5f,  0.0f, 0.0f,
+		 0.5f,  0.5f,  0.5f,  1.0f, 0.0f,
+
+		-0.5f, -0.5f, -0.5f,  0.0f, 1.0f,
+		 0.5f, -0.5f, -0.5f,  1.0f, 1.0f,
+		 0.5f, -0.5f,  0.5f,  1.0f, 0.0f,
+		 0.5f, -0.5f,  0.5f,  1.0f, 0.0f,
+		-0.5f, -0.5f,  0.5f,  0.0f, 0.0f,
+		-0.5f, -0.5f, -0.5f,  0.0f, 1.0f,
+
+		-0.5f,  0.5f, -0.5f,  0.0f, 1.0f,
+		 0.5f,  0.5f, -0.5f,  1.0f, 1.0f,
+		 0.5f,  0.5f,  0.5f,  1.0f, 0.0f,
+		 0.5f,  0.5f,  0.5f,  1.0f, 0.0f,
+		-0.5f,  0.5f,  0.5f,  0.0f, 0.0f,
+		-0.5f,  0.5f, -0.5f,  0.0f, 1.0f
 	};
+
 	unsigned int Indices[] =
 	{
 		0, 1, 3,
@@ -158,23 +198,26 @@ int main()
 	unsigned int VAO, VBO, EBO;
 	glGenVertexArrays(1, &VAO);
 	glGenBuffers(1, &VBO);
-	glGenBuffers(1, &EBO);
+	//glGenBuffers(1, &EBO);
 
 	glBindVertexArray(VAO);
+
 	glBindBuffer(GL_ARRAY_BUFFER, VBO);
 	glBufferData(GL_ARRAY_BUFFER, sizeof(Vertices), Vertices, GL_STATIC_DRAW);
 
-	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, EBO);
-	glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(Indices), Indices, GL_STATIC_DRAW);
+	/*glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, EBO);
+	glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(Indices), Indices, GL_STATIC_DRAW);*/
 
-	glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 8 * sizeof(float), (void*)0);
+	//position attribute
+	glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 5 * sizeof(float), (void*)0);
 	glEnableVertexAttribArray(0);
 
-	glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, 8 * sizeof(float), (void*) (3 *sizeof(float)));
+	//texture coordinates attribute
+	glVertexAttribPointer(1, 2, GL_FLOAT, GL_FALSE, 5 * sizeof(float), (void*) (3 *sizeof(float)));
 	glEnableVertexAttribArray(1);
 
-	glVertexAttribPointer(2, 2, GL_FLOAT, GL_FALSE, 8 * sizeof(float), (void*)(6 * sizeof(float)));
-	glEnableVertexAttribArray(2);
+	/*glVertexAttribPointer(2, 2, GL_FLOAT, GL_FALSE, 8 * sizeof(float), (void*)(6 * sizeof(float)));
+	glEnableVertexAttribArray(2);*/
 
 	OurShader.Use();//we should activate/use the shader before setting the uniforms
 	//both lines do the same to textures but done it differently for each texture for educational purpose
@@ -182,16 +225,6 @@ int main()
 	OurShader.SetInt("texture2", 1);
 
 
-	//Coordinate system :
-	glm::mat4 model = glm::mat4(1.0f);
-	model = glm::rotate(model, glm::radians(-55.f), glm::vec3(1.f, 0.f, 0.f));
-
-	glm::mat4 view = glm::mat4(1.f);
-	//transalting the scene in the opposite direction of where we wanna move
-	view = glm::translate(view, glm::vec3(0.f, 0.f, -3.f));
-
-	glm::mat4 projection;
-	projection = glm::perspective(glm::radians(45.f), float(Width) / float(Height), 0.1f, 100.f);
 
 
 	while (!glfwWindowShouldClose(window))
@@ -200,16 +233,30 @@ int main()
 
 		glfwPollEvents();//checks if any events are triggered like input
 		glClearColor(0.2f, 0.3f, 0.3f, 1.0f);
-		glClear(GL_COLOR_BUFFER_BIT);
+		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
 		glActiveTexture(GL_TEXTURE0);//we can remove this line because some drivers have it activated by default (0 only)
 		glBindTexture(GL_TEXTURE_2D, Texture);
 		glActiveTexture(GL_TEXTURE1);
 		glBindTexture(GL_TEXTURE_2D, Texture2);
 
+		
 		OurShader.SetFloat("MixValue", Mix);
 
+		OurShader.Use();
+
 		//do a transformation
+		//Coordinate system :
+		glm::mat4 model = glm::mat4(1.0f);
+		model = glm::rotate(model, float(glfwGetTime()), glm::vec3(0.5f, 1.f, 0.f));
+
+		glm::mat4 view = glm::mat4(1.f);
+		//transalting the scene in the opposite direction of where we wanna move
+		view = glm::translate(view, glm::vec3(0.f, 0.f, -3.f));
+
+		glm::mat4 projection;
+		projection = glm::perspective(glm::radians(45.f), float(Width) / float(Height), 0.1f, 100.f);
+
 		glm::mat4 Trans = glm::mat4(1.f);
 		Trans = glm::translate(Trans, glm::vec3(0.3f, -0.3f, 0.0f));
 		Trans = glm::rotate(Trans, (float)glfwGetTime(), glm::vec3(0.f, 0.f, 1.f));
@@ -224,9 +271,9 @@ int main()
 		int ProjectionLoc = glGetUniformLocation(OurShader.ID, "projection");
 		glUniformMatrix4fv(ProjectionLoc, 1, GL_FALSE, glm::value_ptr(projection));
 
-		OurShader.Use();
+
 		glBindVertexArray(VAO);
-		glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0);
+		glDrawArrays(GL_TRIANGLES, 0, 36);
 
 
 		//TEST
