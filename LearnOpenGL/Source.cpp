@@ -46,6 +46,7 @@ static bool GLLogCall(const char* function, const char* file, int line)
 }
 
 float Mix;
+glm::vec3 CameraPos, CameraUp, CameraFront;
 
 int main()
 {
@@ -241,6 +242,10 @@ int main()
 
 
 
+	CameraPos = glm::vec3(0.f, 0.f, 3.f);
+	CameraFront = glm::vec3(0.f, 0.f, -1.f);
+	CameraUp = glm::vec3(0.f, 1.f, 0.f);
+
 	while (!glfwWindowShouldClose(window))
 	{
 		processInput(window);//definition is up there =)
@@ -260,27 +265,14 @@ int main()
 		OurShader.Use();
 
 
-		//Camera :
-		glm::vec3 CameraPos = glm::vec3(0.f, 0.f, 3.f);
-		glm::vec3 CameraTarget = glm::vec3(0.f, 0.f, 0.f);
-		//we subtracted in the reverse order because our screen looks in the negative z direction
-		glm::vec3 CameraDirection = glm::normalize(CameraPos - CameraTarget);
 
-		glm::vec3 Up = glm::vec3(0.f, 1.f, 0.f);
-		glm::vec3 CameraRight = glm::normalize(glm::cross(Up, CameraDirection));
-		glm::vec3 CameraUp = glm::cross(CameraDirection, CameraRight);//Gram-Schmidt
-
-
-		float radians = 10.f;
-		float camX = sin(glfwGetTime()) * radians;
-		float camZ = cos(glfwGetTime()) * radians;
 
 		glm::mat4 view;
 		view = glm::lookAt
 		(
-			glm::vec3(camX, 0.f, camZ),
-			glm::vec3(0.f, 0.f, 0.f),
-			glm::vec3(0.f, 1.f, 0.f)
+			CameraPos,
+			CameraPos + CameraFront,
+			CameraUp
 		);
 		//Coordinate system :
 		glm::mat4 projection;
@@ -341,6 +333,16 @@ int main()
 //if we press the escape key set the 'should close' to true so the window will close
 void processInput(GLFWwindow* window)
 {
+	float cameraSpeed = 0.05f; // adjust accordingly
+	if (glfwGetKey(window, GLFW_KEY_W) == GLFW_PRESS)
+		CameraPos += cameraSpeed * CameraFront;
+	if (glfwGetKey(window, GLFW_KEY_S) == GLFW_PRESS)
+		CameraPos -= cameraSpeed * CameraFront;
+	if (glfwGetKey(window, GLFW_KEY_A) == GLFW_PRESS)
+		CameraPos -= glm::normalize(glm::cross(CameraFront, CameraUp)) * cameraSpeed;
+	if (glfwGetKey(window, GLFW_KEY_D) == GLFW_PRESS)
+		CameraPos += glm::normalize(glm::cross(CameraFront, CameraUp)) * cameraSpeed;
+	//buttons for textures
 	if (glfwGetKey(window, GLFW_KEY_ESCAPE) == GLFW_PRESS)//if it's not pressed, it returns GLFW_RELEASE
 		glfwSetWindowShouldClose(window, true);
 	else if (glfwGetKey(window, GLFW_KEY_UP) == GLFW_PRESS)
