@@ -290,8 +290,8 @@ int main()
 		{
 			glm::mat4 model = glm::mat4(1.0f);
 			model = glm::translate(model, CubePositions[i]);
-			float angle = 20.f * i;
-			model = glm::rotate(model, glm::radians(angle), glm::vec3(1.f, 0.3f, 0.5f));
+			float angle = 20.f * (i + 1);
+			model = glm::rotate(model, glm::radians(angle * float(glfwGetTime())), glm::vec3(1.f, 0.3f, 0.5f));
 			OurShader.SetMat4("model", model);
 
 			glDrawArrays(GL_TRIANGLES, 0, 36);
