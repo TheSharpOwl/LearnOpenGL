@@ -259,14 +259,30 @@ int main()
 
 		OurShader.Use();
 
-		//do a transformation
+
+		//Camera :
+		glm::vec3 CameraPos = glm::vec3(0.f, 0.f, 3.f);
+		glm::vec3 CameraTarget = glm::vec3(0.f, 0.f, 0.f);
+		//we subtracted in the reverse order because our screen looks in the negative z direction
+		glm::vec3 CameraDirection = glm::normalize(CameraPos - CameraTarget);
+
+		glm::vec3 Up = glm::vec3(0.f, 1.f, 0.f);
+		glm::vec3 CameraRight = glm::normalize(glm::cross(Up, CameraDirection));
+		glm::vec3 CameraUp = glm::cross(CameraDirection, CameraRight);//Gram-Schmidt
+
+
+		float radians = 10.f;
+		float camX = sin(glfwGetTime()) * radians;
+		float camZ = cos(glfwGetTime()) * radians;
+
+		glm::mat4 view;
+		view = glm::lookAt
+		(
+			glm::vec3(camX, 0.f, camZ),
+			glm::vec3(0.f, 0.f, 0.f),
+			glm::vec3(0.f, 1.f, 0.f)
+		);
 		//Coordinate system :
-		
-
-		glm::mat4 view = glm::mat4(1.f);
-		//transalting the scene in the opposite direction of where we wanna move
-		view = glm::translate(view, glm::vec3(0.f, 0.f, -3.f));
-
 		glm::mat4 projection;
 		projection = glm::perspective(glm::radians(45.f), float(Width) / float(Height), 0.1f, 100.f);
 
