@@ -31,7 +31,8 @@ void framebuffer_size_callback(GLFWwindow* window, int width, int height)
 }
 
 void processInput(GLFWwindow* window);
-
+void MouseCallBack(GLFWwindow* window, double xpos, double ypos);
+void ScrollCallBack(GLFWwindow* window, double xoffset, double yoffset);
 
 //Function for reading a shader file given the path
 
@@ -47,6 +48,15 @@ static bool GLLogCall(const char* function, const char* file, int line)
 
 float Mix;
 glm::vec3 CameraPos, CameraUp, CameraFront;
+float DeltaTime;//automatically zero
+bool FirstMouse = true;
+float LastX = 400, LastY = 300;
+float Pitch = 0.f, Yaw = -90.f;
+float fov = 45.f;//Field of view
+/*
+* Yaw is initialized to -90.0 degrees because zero results in a direction vector pointing
+* to the right so we initially rotate a little bit to the left
+*/
 
 int main()
 {
@@ -57,6 +67,10 @@ int main()
 	//Generate the Window Object
 	GLFWwindow* window = glfwCreateWindow(800, 600, "LearnOpenGL", NULL, NULL);
 	glfwMakeContextCurrent(window);//we should make this directly after creating the window
+	glfwSetCursorPosCallback(window, MouseCallBack);//register our mouse function
+	glfwSetScrollCallback(window, ScrollCallBack);
+	glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_DISABLED);//capture the cursor and don't let it go out of the window
+
 	if (window == NULL)
 	{
 		std::cout << "Failed to create GLFW window" << std::endl;
@@ -246,26 +260,29 @@ int main()
 	CameraFront = glm::vec3(0.f, 0.f, -1.f);
 	CameraUp = glm::vec3(0.f, 1.f, 0.f);
 
+	float LastFrame = 0.f;
+
 	while (!glfwWindowShouldClose(window))
 	{
+		float CurrentFrame = float(glfwGetTime());
+		DeltaTime = CurrentFrame - LastFrame;
+		LastFrame = CurrentFrame;
 		processInput(window);//definition is up there =)
 
-		glfwPollEvents();//checks if any events are triggered like input
 		glClearColor(0.2f, 0.3f, 0.3f, 1.0f);
 		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+
 
 		glActiveTexture(GL_TEXTURE0);//we can remove this line because some drivers have it activated by default (0 only)
 		glBindTexture(GL_TEXTURE_2D, Texture);
 		glActiveTexture(GL_TEXTURE1);
 		glBindTexture(GL_TEXTURE_2D, Texture2);
-
+		
+		glfwPollEvents();//checks if any events are triggered like input
 		
 		OurShader.SetFloat("MixValue", Mix);
 
 		OurShader.Use();
-
-
-
 
 		glm::mat4 view;
 		view = glm::lookAt
@@ -274,9 +291,11 @@ int main()
 			CameraPos + CameraFront,
 			CameraUp
 		);
+		OurShader.SetMat4("view", view);
 		//Coordinate system :
 		glm::mat4 projection;
-		projection = glm::perspective(glm::radians(45.f), float(Width) / float(Height), 0.1f, 100.f);
+		projection = glm::perspective(glm::radians(fov), float(Width) / float(Height), 0.1f, 100.f);
+		OurShader.SetMat4("projection", projection);
 
 		glm::mat4 Trans = glm::mat4(1.f);
 		Trans = glm::translate(Trans, glm::vec3(0.3f, -0.3f, 0.0f));
@@ -285,13 +304,6 @@ int main()
 		OurShader.SetMat4("transform", Trans);
 		//int ModelLoc = glGetUniformLocation(OurShader.ID, "model");
 		//glUniformMatrix4fv(ModelLoc, 1, GL_FALSE, glm::value_ptr(model));
-
-		int ViewLoc = glGetUniformLocation(OurShader.ID, "view");
-		glUniformMatrix4fv(ViewLoc, 1, GL_FALSE, glm::value_ptr(view));
-
-		int ProjectionLoc = glGetUniformLocation(OurShader.ID, "projection");
-		glUniformMatrix4fv(ProjectionLoc, 1, GL_FALSE, glm::value_ptr(projection));
-
 
 		glBindVertexArray(VAO);
 		for (unsigned int i = 0; i < 10; i++)
@@ -305,20 +317,7 @@ int main()
 			glDrawArrays(GL_TRIANGLES, 0, 36);
 		}
 
-		//TEST
-		// second transformation
-		// ---------------------
-		Trans = glm::mat4(1.0f); // reset it to identity matrix
-		Trans = glm::translate(Trans, glm::vec3(-0.5f, 0.5f, 0.0f));
-		float scaleAmount = sin(glfwGetTime());
-		Trans = glm::scale(Trans, glm::vec3(scaleAmount, scaleAmount, scaleAmount));
-		unsigned int transformLoc = glGetUniformLocation(OurShader.ID, "transform");
-		glUniformMatrix4fv(transformLoc, 1, GL_FALSE, &Trans[0][0]); // this time take the matrix value array's first element as its memory pointer value
 
-		// now with the uniform matrix being replaced with new transformations, draw it again.
-		glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0);
-
-		
 		glfwSwapBuffers(window);
 		glfwPollEvents();
 	}
@@ -333,7 +332,7 @@ int main()
 //if we press the escape key set the 'should close' to true so the window will close
 void processInput(GLFWwindow* window)
 {
-	float cameraSpeed = 0.05f; // adjust accordingly
+	float cameraSpeed = 2.5f * DeltaTime; //adjust accordingly
 	if (glfwGetKey(window, GLFW_KEY_W) == GLFW_PRESS)
 		CameraPos += cameraSpeed * CameraFront;
 	if (glfwGetKey(window, GLFW_KEY_S) == GLFW_PRESS)
@@ -357,4 +356,45 @@ void processInput(GLFWwindow* window)
 		if (Mix <= 0.f)
 			Mix = 0.f;
 	}
+}
+void MouseCallBack(GLFWwindow* window, double xpos, double ypos)
+{
+	if (FirstMouse)
+	{
+		LastX = xpos;
+		LastY = ypos;
+		FirstMouse = false;
+	}
+
+	float xoffset = xpos - LastX;
+	float yoffset = LastY - ypos;//because y is reversed in the screen coordinates
+	LastX = xpos;
+	LastY = ypos;
+
+	float Sensetivity = 0.05f;
+	xoffset *= Sensetivity;
+	yoffset *= Sensetivity;
+
+	Yaw += xoffset;
+	Pitch += yoffset;
+
+	if (Pitch > 89.f)
+		Pitch = 89.f;
+	else if (Pitch < -89.f)
+		Pitch = -89.f;
+
+	glm::vec3 front;
+	front.x = cos(glm::radians(Yaw)) /* * cos(glm::radians(Pitch))*/;//The pitch shouldn't be here and it doesn't affect the program but it's in the tutorial
+	front.y = sin(glm::radians(Pitch));
+	front.z = sin(glm::radians(Yaw)) * cos(glm::radians(Pitch));
+	CameraFront = glm::normalize(front);
+}
+void ScrollCallBack(GLFWwindow* window, double xoffset, double yoffset)
+{
+	if (fov >= 1.f && fov <= 45.f)
+		fov -= yoffset;
+	else if (fov <= 1.f)
+		fov = 1.0;
+	else if (fov > 45.f)
+		fov = 45.f;
 }
