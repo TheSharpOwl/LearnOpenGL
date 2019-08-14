@@ -12,9 +12,11 @@
 #include<iostream>
 
 #include "Shader.h"
+#include "Camera.h"
 
 #define STB_IMAGE_IMPLEMENTATION
 #include "stb_image.h"
+
 
 void initGLFW()
 {
@@ -50,6 +52,7 @@ float Mix;
 glm::vec3 CameraPos, CameraUp, CameraFront;
 float DeltaTime;//automatically zero
 bool FirstMouse = true;
+Camera OurCamera(glm::vec3(0.f,0.f,0.f));
 float LastX = 400, LastY = 300;
 float Pitch = 0.f, Yaw = -90.f;
 float fov = 45.f;//Field of view

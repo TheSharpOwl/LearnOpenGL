@@ -31,7 +31,7 @@ public:
 	float MovementSpeed, MouseSensitivity, Zoom;
 
 	//constructor
-	Camera(glm::vec3 position, glm::vec3 up, float yaw, float pitch);
+	Camera(glm::vec3 position = glm::vec3(0.f,0.f,0.f), glm::vec3 up = glm::vec3(0.f, 1.f, 0.f), float yaw = YAW, float pitch = PITCH);
 	//contructor with scalar values
 	Camera(float posX, float posY, float posZ, float upX, float upY, float upZ, float yaw, float pitch);
 

@@ -1,9 +1,8 @@
 #include "Camera.h"
-
 using namespace glm;
 
-Camera::Camera(vec3 position = vec3(0.f, 0.f, 0.f), vec3 up = vec3(0.f, 1.f, 0.f), float yaw = YAW, float pitch = PITCH) :
-	Front(vec3(0.f, 0.f, -1.f)), MovementSpeed(SPEED), MouseSensitivity(SENSITIVITY), Zoom(ZOOM)
+Camera::Camera(glm::vec3 position, glm::vec3 up, float yaw, float pitch) :
+	Front(glm::vec3(0.f, 0.f, -1.f)), MovementSpeed(SPEED), MouseSensitivity(SENSITIVITY), Zoom(ZOOM)
 {
 	Position = position;
 	WorldUp = up;
