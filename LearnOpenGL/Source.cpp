@@ -49,17 +49,14 @@ static bool GLLogCall(const char* function, const char* file, int line)
 }
 
 float Mix;
+
+//Camera Part
 glm::vec3 CameraPos, CameraUp, CameraFront;
 float DeltaTime;//automatically zero
+float LastFrame;//automatically zero
 bool FirstMouse = true;
-Camera OurCamera(glm::vec3(0.f,0.f,0.f));
+Camera OurCamera(glm::vec3(0.f,0.f,3.f));
 float LastX = 400, LastY = 300;
-float Pitch = 0.f, Yaw = -90.f;
-float fov = 45.f;//Field of view
-/*
-* Yaw is initialized to -90.0 degrees because zero results in a direction vector pointing
-* to the right so we initially rotate a little bit to the left
-*/
 
 int main()
 {
@@ -256,14 +253,7 @@ int main()
 	glUniform1i(glGetUniformLocation(OurShader.ID, "texture1"), 0);
 	OurShader.SetInt("texture2", 1);
 
-
-
-
-	CameraPos = glm::vec3(0.f, 0.f, 3.f);
-	CameraFront = glm::vec3(0.f, 0.f, -1.f);
-	CameraUp = glm::vec3(0.f, 1.f, 0.f);
-
-	float LastFrame = 0.f;
+	
 
 	while (!glfwWindowShouldClose(window))
 	{
@@ -287,17 +277,12 @@ int main()
 
 		OurShader.Use();
 
-		glm::mat4 view;
-		view = glm::lookAt
-		(
-			CameraPos,
-			CameraPos + CameraFront,
-			CameraUp
-		);
+		glm::mat4 view = OurCamera.GetViewMatrix();
 		OurShader.SetMat4("view", view);
+
 		//Coordinate system :
 		glm::mat4 projection;
-		projection = glm::perspective(glm::radians(fov), float(Width) / float(Height), 0.1f, 100.f);
+		projection = glm::perspective(glm::radians(OurCamera.Zoom), float(Width) / float(Height), 0.1f, 100.f);
 		OurShader.SetMat4("projection", projection);
 
 		glm::mat4 Trans = glm::mat4(1.f);
@@ -335,31 +320,34 @@ int main()
 //if we press the escape key set the 'should close' to true so the window will close
 void processInput(GLFWwindow* window)
 {
-	float cameraSpeed = 2.5f * DeltaTime; //adjust accordingly
-	if (glfwGetKey(window, GLFW_KEY_W) == GLFW_PRESS)
-		CameraPos += cameraSpeed * CameraFront;
-	if (glfwGetKey(window, GLFW_KEY_S) == GLFW_PRESS)
-		CameraPos -= cameraSpeed * CameraFront;
-	if (glfwGetKey(window, GLFW_KEY_A) == GLFW_PRESS)
-		CameraPos -= glm::normalize(glm::cross(CameraFront, CameraUp)) * cameraSpeed;
-	if (glfwGetKey(window, GLFW_KEY_D) == GLFW_PRESS)
-		CameraPos += glm::normalize(glm::cross(CameraFront, CameraUp)) * cameraSpeed;
-	//buttons for textures
 	if (glfwGetKey(window, GLFW_KEY_ESCAPE) == GLFW_PRESS)//if it's not pressed, it returns GLFW_RELEASE
 		glfwSetWindowShouldClose(window, true);
-	else if (glfwGetKey(window, GLFW_KEY_UP) == GLFW_PRESS)
+
+	//Buttons for camera
+	if (glfwGetKey(window, GLFW_KEY_W) == GLFW_PRESS)
+		OurCamera.ProcessKeyboard(FORWARD, DeltaTime);
+	if (glfwGetKey(window, GLFW_KEY_S) == GLFW_PRESS)
+		OurCamera.ProcessKeyboard(BACKWARD, DeltaTime);
+	if (glfwGetKey(window, GLFW_KEY_A) == GLFW_PRESS)
+		OurCamera.ProcessKeyboard(LEFT, DeltaTime);
+	if (glfwGetKey(window, GLFW_KEY_D) == GLFW_PRESS)
+		OurCamera.ProcessKeyboard(RIGHT, DeltaTime);
+
+	//buttons for textures
+	if (glfwGetKey(window, GLFW_KEY_UP) == GLFW_PRESS)
 	{
 		Mix += 0.001f;
 		if (Mix >= 1.f)
 			Mix = 1.f;
 	}
-	else if (glfwGetKey(window, GLFW_KEY_DOWN) == GLFW_PRESS)
+	if (glfwGetKey(window, GLFW_KEY_DOWN) == GLFW_PRESS)
 	{
 		Mix -= 0.001f;
 		if (Mix <= 0.f)
 			Mix = 0.f;
 	}
 }
+
 void MouseCallBack(GLFWwindow* window, double xpos, double ypos)
 {
 	if (FirstMouse)
@@ -374,30 +362,9 @@ void MouseCallBack(GLFWwindow* window, double xpos, double ypos)
 	LastX = float(xpos);
 	LastY = float(ypos);
 
-	float Sensetivity = 0.05f;
-	xoffset *= Sensetivity;
-	yoffset *= Sensetivity;
-
-	Yaw += xoffset;
-	Pitch += yoffset;
-
-	if (Pitch > 89.f)
-		Pitch = 89.f;
-	else if (Pitch < -89.f)
-		Pitch = -89.f;
-
-	glm::vec3 front;
-	front.x = cos(glm::radians(Yaw)) /* * cos(glm::radians(Pitch))*/;//The pitch shouldn't be here and it doesn't affect the program but it's in the tutorial
-	front.y = sin(glm::radians(Pitch));
-	front.z = sin(glm::radians(Yaw)) * cos(glm::radians(Pitch));
-	CameraFront = glm::normalize(front);
+	OurCamera.ProcessMouseMovement(xoffset, yoffset);
 }
 void ScrollCallBack(GLFWwindow* window, double xoffset, double yoffset)
 {
-	if (fov >= 1.f && fov <= 45.f)
-		fov -= float(yoffset);
-	else if (fov <= 1.f)
-		fov = 1.0;
-	else if (fov > 45.f)
-		fov = 45.f;
+	OurCamera.ProcessMouseScroll(yoffset);
 }

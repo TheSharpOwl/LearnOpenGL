@@ -7,6 +7,10 @@
 #include<vector>
 
 //Default Camera Values
+/*
+* Yaw is initialized to -90.0 degrees because zero results in a direction vector pointing
+* to the right so we initially rotate a little bit to the left
+*/
 const float YAW = -90.f;
 const float PITCH = 0.f;
 const float SPEED = 2.5f;
@@ -38,6 +42,9 @@ public:
 	glm::mat4 GetViewMatrix();
 
 	void ProcessKeyboard(CameraMove Direction, float DeltaTime);
+
+	void ProcessMouseMovement(float xoffset, float yoffset, GLboolean constrainPitch = true);
+
 	//process the input recieved from mouse scroll-wheel events, we only need vertical axis
 	void ProcessMouseScroll(float yoffset);
 private:

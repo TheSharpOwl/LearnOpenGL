@@ -32,6 +32,24 @@ void Camera::ProcessKeyboard(CameraMove Direction, float DeltaTime)
 		Position += Right * Velocity;
 
 }
+void Camera::ProcessMouseMovement(float xoffset, float yoffset, GLboolean constrainPitch)
+{
+	xoffset *= MouseSensitivity;
+	yoffset *= MouseSensitivity;
+
+	Yaw += xoffset;
+	Pitch += yoffset;
+
+	if (constrainPitch)
+	{
+		if (Pitch > 89.f)
+			Pitch = 89.f;
+		else if (Pitch < -89.f)
+			Pitch = -89.f;
+	}
+	
+	UpdateCameraVectors();
+}
 void Camera::ProcessMouseScroll(float yoffset)
 {
 	if (Zoom >= 1.f && Zoom <= 45.f)
