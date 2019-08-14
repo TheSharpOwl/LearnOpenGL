@@ -1,0 +1,60 @@
+#include "Camera.h"
+
+using namespace glm;
+
+Camera::Camera(vec3 position = vec3(0.f, 0.f, 0.f), vec3 up = vec3(0.f, 1.f, 0.f), float yaw = YAW, float pitch = PITCH) :
+	Front(vec3(0.f, 0.f, -1.f)), MovementSpeed(SPEED), MouseSensitivity(SENSITIVITY), Zoom(ZOOM)
+{
+	Position = position;
+	WorldUp = up;
+	Yaw = yaw;
+	Pitch = pitch;
+	UpdateCameraVectors();
+}
+Camera::Camera(float posX, float posY, float posZ, float upX, float upY, float upZ, float yaw, float pitch) :
+	Front(vec3(0.f, 0.f, -1.f)), MovementSpeed(SPEED), MouseSensitivity(SENSITIVITY), Zoom(ZOOM)
+{
+	Position = vec3(posX, posY, posZ);
+	WorldUp = vec3(upX, upY, upZ);
+	Yaw = yaw;
+	Pitch = pitch;
+	UpdateCameraVectors();
+}
+void Camera::ProcessKeyboard(CameraMove Direction, float DeltaTime)
+{
+	float Velocity = MovementSpeed * DeltaTime;
+	if (Direction == FORWARD)
+		Position += Front * Velocity;
+	if (Direction == BACKWARD)
+		Position -= Front * Velocity;
+	if (Direction == LEFT)
+		Position -= Right * Velocity;
+	if (Direction == RIGHT)
+		Position += Right * Velocity;
+
+}
+void Camera::ProcessMouseScroll(float yoffset)
+{
+	if (Zoom >= 1.f && Zoom <= 45.f)
+		Zoom -= yoffset;
+	if (Zoom <= 1.f)
+		Zoom = 1.f;
+	if (Zoom >= 45.f)
+		Zoom = 45.f;
+}
+void Camera::UpdateCameraVectors()
+{
+	//calculate the new front vector
+	vec3 front;
+	front.x = cos(radians(Yaw));//it's multiplied by pitch on the website but I dont's think it should be
+	front.y = sin(radians(Pitch));
+	front.z = sin(radians(Yaw)) * cos(radians(Pitch));
+	Front = normalize(front);
+	//recalcualte up and right vectors
+	Right = normalize(cross(Front, WorldUp));
+	Up = normalize(cross(Right, Front));
+}
+mat4 Camera::GetViewMatrix()
+{
+	return lookAt(Position, Position + Front, Up);
+}

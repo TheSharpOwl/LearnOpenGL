@@ -361,15 +361,15 @@ void MouseCallBack(GLFWwindow* window, double xpos, double ypos)
 {
 	if (FirstMouse)
 	{
-		LastX = xpos;
-		LastY = ypos;
+		LastX = float(xpos);
+		LastY = float(ypos);
 		FirstMouse = false;
 	}
 
-	float xoffset = xpos - LastX;
-	float yoffset = LastY - ypos;//because y is reversed in the screen coordinates
-	LastX = xpos;
-	LastY = ypos;
+	float xoffset = float(xpos - LastX);
+	float yoffset = float(LastY - ypos);//because y is reversed in the screen coordinates
+	LastX = float(xpos);
+	LastY = float(ypos);
 
 	float Sensetivity = 0.05f;
 	xoffset *= Sensetivity;
@@ -392,7 +392,7 @@ void MouseCallBack(GLFWwindow* window, double xpos, double ypos)
 void ScrollCallBack(GLFWwindow* window, double xoffset, double yoffset)
 {
 	if (fov >= 1.f && fov <= 45.f)
-		fov -= yoffset;
+		fov -= float(yoffset);
 	else if (fov <= 1.f)
 		fov = 1.0;
 	else if (fov > 45.f)
