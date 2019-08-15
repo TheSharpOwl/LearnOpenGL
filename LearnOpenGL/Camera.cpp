@@ -30,6 +30,8 @@ void Camera::ProcessKeyboard(CameraMove Direction, float DeltaTime)
 		Position -= Right * Velocity;
 	if (Direction == RIGHT)
 		Position += Right * Velocity;
+	//add this to be a true fps camera (no flying you just can look around)
+	//Position.y = 0.f;
 
 }
 void Camera::ProcessMouseMovement(float xoffset, float yoffset, GLboolean constrainPitch)
