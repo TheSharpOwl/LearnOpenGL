@@ -12,12 +12,19 @@ My codes while learning OpenGL from learnopengl.com, TheCherno on youtube and ot
 
 2. Stride : The size of the vertex attributes' in bytes. It's necessary for OpenGL to know the offset when it wants to index vertex i.
 
-3. ```void glVertexAttribPointer(GLuint index,
-  	GLint size,
-  	GLenum type,
-  	GLboolean normalized,
-  	GLsizei stride,
-  	const GLvoid * pointer)```
+3. ```
+	void glVertexAttribPointer(GLuint index,
+
+	GLint size,
+
+	GLenum type,
+
+	GLboolean normalized,
+
+	GLsizei stride,
+
+	const GLvoid * pointer);
+	```
     This function is confusing a little bit... :sweat:
     - First of all, this function is called for each vertex attribute (which means if I have poistion and a texture I should call it twice)
     - Second, Parameters:
