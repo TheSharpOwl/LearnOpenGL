@@ -152,10 +152,12 @@ int main()
 	-0.5f,  0.5f, -0.5f
 	};
 
+	//VBO is the same for both, the light and the cubes
 	unsigned int VBO, CubeVAO;
+
+	//The cube part
 	glGenVertexArrays(1, &CubeVAO);
 	glGenBuffers(1, &VBO);
-
 
 	glBindBuffer(GL_ARRAY_BUFFER, VBO);
 	glBufferData(GL_ARRAY_BUFFER, sizeof(Vertices), Vertices, GL_STATIC_DRAW);
@@ -166,78 +168,80 @@ int main()
 	glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 3 * sizeof(float), (void*)0);
 	glEnableVertexAttribArray(0);
 
-	//texture coordinates attribute
-	glVertexAttribPointer(1, 2, GL_FLOAT, GL_FALSE, 5 * sizeof(float), (void*) (3 *sizeof(float)));
-	glEnableVertexAttribArray(1);
+	//The light part
 
-	/*glVertexAttribPointer(2, 2, GL_FLOAT, GL_FALSE, 8 * sizeof(float), (void*)(6 * sizeof(float)));
-	glEnableVertexAttribArray(2);*/
+	//configuration of light's VAO (VBO is the same for the light in this case)
+	unsigned int LightVAO;
+	glGenVertexArrays(1, &LightVAO);
+	glBindVertexArray(LightVAO);
 
-	OurShader.Use();//we should activate/use the shader before setting the uniforms
-	//both lines do the same to textures but done it differently for each texture for educational purpose
-	glUniform1i(glGetUniformLocation(OurShader.ID, "texture1"), 0);
-	OurShader.SetInt("texture2", 1);
+	//find the VBO (no need to fill it, it contains all the needed information)
+	glBindBuffer(GL_ARRAY_BUFFER, VBO);
 
-	
+	glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 3 * sizeof(float), (void*)0);
+	glEnableVertexAttribArray(0); // not 1 because this is the light, it's not a part of the cubes' vertex
 
+	const int Width = 800, Height = 600;
+	glm::vec3 LightPos(1.2f, 1.0f, 2.0f);
+
+	//render loop
 	while (!glfwWindowShouldClose(window))
 	{
 		float CurrentFrame = float(glfwGetTime());
 		DeltaTime = CurrentFrame - LastFrame;
 		LastFrame = CurrentFrame;
+
 		processInput(window);//definition is up there =)
 
-		glClearColor(0.2f, 0.3f, 0.3f, 1.0f);
+		glClearColor(0.1f, 0.1f, 0.1f, 1.0f);
 		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
+		//use the shader before setting up the uniforms' values !!!
+		LightingShader.Use();
+		LightingShader.SetVec3("objectColor", 1.f, 0.5f, 0.31f);
+		LightingShader.SetVec3("lightColor", 1.f, 1.f, 1.f);
 
-		glActiveTexture(GL_TEXTURE0);//we can remove this line because some drivers have it activated by default (0 only)
-		glBindTexture(GL_TEXTURE_2D, Texture);
-		glActiveTexture(GL_TEXTURE1);
-		glBindTexture(GL_TEXTURE_2D, Texture2);
 		
 		glfwPollEvents();//checks if any events are triggered like input
-		
-		OurShader.SetFloat("MixValue", Mix);
-
-		OurShader.Use();
 
 		glm::mat4 view = OurCamera.GetViewMatrix();
-		OurShader.SetMat4("view", view);
+		LightingShader.SetMat4("view", view);
 
 		//Coordinate system :
 		glm::mat4 projection;
 		projection = glm::perspective(glm::radians(OurCamera.Zoom), float(Width) / float(Height), 0.1f, 100.f);
-		OurShader.SetMat4("projection", projection);
+		LightingShader.SetMat4("projection", projection);
 
-		glm::mat4 Trans = glm::mat4(1.f);
-		Trans = glm::translate(Trans, glm::vec3(0.3f, -0.3f, 0.0f));
-		Trans = glm::rotate(Trans, (float)glfwGetTime(), glm::vec3(0.f, 0.f, 1.f));
+		//world transformation
+		glm::mat4 model = glm::mat4(1.0f);
+		LightingShader.SetMat4("model", model);
 
-		OurShader.SetMat4("transform", Trans);
-		//int ModelLoc = glGetUniformLocation(OurShader.ID, "model");
-		//glUniformMatrix4fv(ModelLoc, 1, GL_FALSE, glm::value_ptr(model));
+		//render the cube
+		glBindVertexArray(CubeVAO);
+		glDrawArrays(GL_TRIANGLES, 0, 36);
 
-		glBindVertexArray(VAO);
-		for (unsigned int i = 0; i < 10; i++)
-		{
-			glm::mat4 model = glm::mat4(1.0f);
-			model = glm::translate(model, CubePositions[i]);
-			float angle = 20.f * (i + 1);
-			model = glm::rotate(model, glm::radians(angle * float(glfwGetTime())), glm::vec3(1.f, 0.3f, 0.5f));
-			OurShader.SetMat4("model", model);
+		//draw the lamp
+		LampShader.Use();
+		LampShader.SetMat4("projection", projection);
+		LampShader.SetMat4("view", view);
 
-			glDrawArrays(GL_TRIANGLES, 0, 36);
-		}
+		model = glm::mat4(1.f);
+		model = glm::translate(model, LightPos);
+		model = glm::scale(model, glm::vec3(0.2f)); // a smaller cube
+		LampShader.SetMat4("model", model);
+
+		glBindVertexArray(LightVAO);
+		glDrawArrays(GL_TRIANGLES, 0, 36);
+
 
 
 		glfwSwapBuffers(window);
 		glfwPollEvents();
 	}
 
-	glDeleteVertexArrays(1, &VAO);
+	glDeleteVertexArrays(1, &CubeVAO);
+	glDeleteVertexArrays(1, &LightVAO);
 	glDeleteBuffers(1, &VBO);
-	glDeleteBuffers(1, &EBO);
 
 	glfwTerminate();
 	return 0;

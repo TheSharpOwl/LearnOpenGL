@@ -10,7 +10,7 @@ My codes while learning OpenGL from learnopengl.com, TheCherno on youtube and ot
 1. [Use of Vertex Array Objects, Vertex Buffer Objects and Differences Between Them](https://stackoverflow.com/questions/23314787/use-of-vertex-array-objects-and-vertex-buffer-objects)
 
 
-2. Stride : The size of the vertex attributes' in bytes. It's necessary for OpenGL to know the offset when it wants to index vertex i.
+2. **Stride**: The size of the vertex attributes' in bytes. It's necessary for OpenGL to know the offset when it wants to index vertex i.
 
 3. ```
 	void glVertexAttribPointer(GLuint index,
@@ -35,6 +35,9 @@ My codes while learning OpenGL from learnopengl.com, TheCherno on youtube and ot
         5. Pointer : Where does this attribute start inside the vertex (offset inside the vertex). !! you should cast the number to (void*) !!
     Third, don't forget to call `glEnableVertexAttribArray(i)` where i is the i'th call of the function or it stands for the i'th attribute...
     
+4. We should activate/**use the shader** **before** setting up the **uniforms' values** !
+
+
 ## References and places to look up
 
 1. [docs.gl](http://docs.gl/)
