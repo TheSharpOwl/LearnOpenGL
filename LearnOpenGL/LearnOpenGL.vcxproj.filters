@@ -38,6 +38,18 @@
     <None Include="VertexShader.glsl">
       <Filter>Shaders</Filter>
     </None>
+    <None Include="ColorsVertex.glsl">
+      <Filter>Shaders</Filter>
+    </None>
+    <None Include="ColorsFragment.glsl">
+      <Filter>Shaders</Filter>
+    </None>
+    <None Include="LampVertex.glsl">
+      <Filter>Shaders</Filter>
+    </None>
+    <None Include="LampFragment.glsl">
+      <Filter>Shaders</Filter>
+    </None>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Shader.h">
