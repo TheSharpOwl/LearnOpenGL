@@ -40,8 +40,16 @@ My codes while learning OpenGL from learnopengl.com, TheCherno on youtube and ot
     
 4. We should activate/**use the shader** **before** setting up the **uniforms' values** !
 
+5. [How vertex and fragment shaders communicate in OpenGL?] (https://stackoverflow.com/questions/28333019/how-vertex-and-fragment-shaders-communicate-in-opengl)
+Since we have in a triangle (for example) three vertices and much more fragments, how does each fragment deal with the info it gets from each vertex differently?
 
-## References and places to look up
+6. Gouraud vs Phong models :
+
+When the Phong lighting model is implemented in the vertex shader it is called Gouraud shading instead of Phong shading. Note that due to the interpolation the lighting looks a bit off. The Phong shading gives much smoother lighting results. 
+
+## References and useful resources
 
 1. [docs.gl](http://docs.gl/)
-		 
+
+2.[Light House 3D](http://www.lighthouse3d.com/)
+
