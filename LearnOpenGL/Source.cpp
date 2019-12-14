@@ -10,6 +10,7 @@
 #include<fstream>
 #include<sstream>
 #include<iostream>
+#include<math.h>
 
 #include "Shader.h"
 #include "Camera.h"
@@ -17,6 +18,7 @@
 #define STB_IMAGE_IMPLEMENTATION
 #include "stb_image.h"
 
+#define _USE_MATH_DEFINES
 
 void initGLFW()
 {
@@ -185,9 +187,9 @@ int main()
 	glEnableVertexAttribArray(0); // not 1 because this is the light, it's not a part of the cubes' vertex
 
 	const int Width = 800, Height = 600;
-	glm::vec3 LightPos(1.2f, 1.0f, 2.0f);
+	glm::vec3 LightPos(2.0f, 0.f, 2.0f);
 
-	
+	double time = 0.0;
 	//render loop
 	while (!glfwWindowShouldClose(window))
 	{
@@ -204,6 +206,8 @@ int main()
 		LightingShader.Use();
 		LightingShader.SetVec3("objectColor", 1.f, 0.5f, 0.31f);
 		LightingShader.SetVec3("lightColor", 1.f, 1.f, 1.f);
+
+
 		LightingShader.SetVec3("lightPos", LightPos);
 		LightingShader.SetVec3("viewPos", OurCamera.Position);
 		
@@ -231,6 +235,10 @@ int main()
 		LampShader.SetMat4("view", view);
 
 		model = glm::mat4(1.f);
+		const double  Pi = 3.14159265358979323846;
+		time += 0.001;
+		LightPos.x = sqrt(8.0) * cos(time) + 1.0;
+		LightPos.z = sqrt(8.0) * sin(time) + 1.0;
 		model = glm::translate(model, LightPos);
 		model = glm::scale(model, glm::vec3(0.2f)); // a smaller cube
 		LampShader.SetMat4("model", model);
