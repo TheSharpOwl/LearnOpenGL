@@ -109,7 +109,8 @@ int main()
 
 	//6 suquares, 2 triangles for each to draw a cube
 	//the second 3 positions in each line are for the surface normals
-	float Vertices[] = {
+	float Vertices[] = 
+	{
 	-0.5f, -0.5f, -0.5f,  0.0f,  0.0f, -1.0f,
 	 0.5f, -0.5f, -0.5f,  0.0f,  0.0f, -1.0f,
 	 0.5f,  0.5f, -0.5f,  0.0f,  0.0f, -1.0f,
