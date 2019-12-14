@@ -50,11 +50,10 @@ static bool GLLogCall(const char* function, const char* file, int line)
 
 float Mix;
 
-//Camera Part
-glm::vec3 CameraPos, CameraUp, CameraFront;
 float DeltaTime;//automatically zero
 float LastFrame;//automatically zero
 bool FirstMouse = true;
+//Camera Part
 Camera OurCamera(glm::vec3(0.f,0.f,3.f));
 float LastX = 400, LastY = 300;
 
@@ -188,6 +187,7 @@ int main()
 	const int Width = 800, Height = 600;
 	glm::vec3 LightPos(1.2f, 1.0f, 2.0f);
 
+	
 	//render loop
 	while (!glfwWindowShouldClose(window))
 	{
@@ -205,7 +205,7 @@ int main()
 		LightingShader.SetVec3("objectColor", 1.f, 0.5f, 0.31f);
 		LightingShader.SetVec3("lightColor", 1.f, 1.f, 1.f);
 		LightingShader.SetVec3("lightPos", LightPos);
-
+		LightingShader.SetVec3("viewPos", OurCamera.Position);
 		
 		glfwPollEvents();//checks if any events are triggered like input
 
