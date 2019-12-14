@@ -49,6 +49,11 @@ When the Phong lighting model is implemented in the vertex shader it is called G
 
 7. In view Space the viewer is always at position (0, 0, 0).
 
+8. When you get the location of the uniform in the cpp, you get -1 if it did't find that uniform **or if it's declared in the shader but not used!**
+
+9. [glfwSwapInterval](https://www.glfw.org/docs/3.1/window.html#buffer_swap) : which makes the movement smoother because it enables [V-Sync](https://www.digitaltrends.com/computing/what-is-vsync/). For additional info check [this question](https://discourse.glfw.org/t/newbie-questions-trying-to-understand-glfwswapinterval/1287)
+
+
 ## References and useful resources
 
 1. [docs.gl](http://docs.gl/)
