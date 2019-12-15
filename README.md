@@ -65,9 +65,9 @@ When the Phong lighting model is implemented in the vertex shader it is called G
 
 3. [Real World Material Table](http://devernay.free.fr/cours/opengl/materials.html)
 
- **Note that the table's ambient values are not the same as the diffuse values; they didn't take light intensities into account. To correctly set their values you'd have to set all the light intensities to vec3(1.0) to get the same output...**
+    **Note that the table's ambient values are not the same as the diffuse values; they didn't take light intensities into account.    To correctly set their values you'd have to set all the light intensities to vec3(1.0) to get the same output...**
 
-![](https://imgur.com/adMlLCr.png)
+    ![](https://imgur.com/adMlLCr.png)
 
 
 
