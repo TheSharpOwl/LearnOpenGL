@@ -54,6 +54,7 @@ When the Phong lighting model is implemented in the vertex shader it is called G
 9. [glfwSwapInterval](https://www.glfw.org/docs/3.1/window.html#buffer_swap) : which makes the movement smoother because it enables [V-Sync](https://www.digitaltrends.com/computing/what-is-vsync/). For additional info check [this question](https://discourse.glfw.org/t/newbie-questions-trying-to-understand-glfwswapinterval/1287)
 
 10. Components of Phong shading:
+
 ![](https://imgur.com/z95AgKq.png)
 
 ## References and useful resources
