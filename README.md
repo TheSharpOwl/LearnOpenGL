@@ -45,7 +45,7 @@ Since we have in a triangle (for example) three vertices and much more fragments
 
 6. Gouraud vs Phong models :
 
-When the Phong lighting model is implemented in the vertex shader it is called Gouraud shading instead of Phong shading. Note that due to the interpolation the lighting looks a bit off. The Phong shading gives much smoother lighting results. 
+    When the Phong lighting model is implemented in the vertex shader it is called Gouraud shading instead of Phong shading. Note that due to the interpolation the lighting looks a bit off. The Phong shading gives much smoother lighting results. 
 
 7. In view Space the viewer is always at position (0, 0, 0).
 
