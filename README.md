@@ -61,5 +61,5 @@ When the Phong lighting model is implemented in the vertex shader it is called G
 
 1. [docs.gl](http://docs.gl/)
 
-2.[Light House 3D](http://www.lighthouse3d.com/)
+2. [Light House 3D](http://www.lighthouse3d.com/)
 
