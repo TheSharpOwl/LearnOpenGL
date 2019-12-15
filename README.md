@@ -57,6 +57,9 @@ Since we have in a triangle (for example) three vertices and much more fragments
 
 ![](https://imgur.com/z95AgKq.png)
 
+11. [Sampler2D](https://stackoverflow.com/questions/10868958/what-does-sampler2d-store)(which is used to store images for textures) in OpenGL is an [**Opaque Type**](https://stackoverflow.com/questions/2301454/what-defines-an-opaque-type-in-c-and-when-are-they-necessary-and-or-useful) which is why you can only use it as a uniform in the shaders.
+
+
 ## References and useful resources
 
 1. [docs.gl](http://docs.gl/)
