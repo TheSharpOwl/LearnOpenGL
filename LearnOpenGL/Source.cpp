@@ -211,7 +211,26 @@ int main()
 
 		LightingShader.SetVec3("lightPos", LightPos);
 		LightingShader.SetVec3("viewPos", OurCamera.Position);
+		LightingShader.SetVec3("material.ambient", 1.f, 0.5f, 0.31f);
+		LightingShader.SetVec3("material.diffuse", 1.0f, 0.5f, 0.31f);
+		LightingShader.SetVec3("material.specular", 0.5f, 0.5f, 0.5f);
+		LightingShader.SetFloat("material.shininess", 32.0f);
+
+		//no need to change the specular (it's object-color indepenedent as I understood because it's like the shininess)
+		LightingShader.SetVec3("light.specular", 1.0f, 1.0f, 1.0f);
+		//make the light color on the cube change overtime...
+		glm::vec3 lightColor;
+		lightColor.x = sin(glfwGetTime() * 2.0f);
+		lightColor.y = sin(glfwGetTime() * 0.7f);
+		lightColor.z = sin(glfwGetTime() * 1.3f);
+
+		glm::vec3 diffuseColor = lightColor * glm::vec3(0.5f); // decrease the influence
+		glm::vec3 ambientColor = diffuseColor * glm::vec3(0.2f); // low influence
+
+		LightingShader.SetVec3("light.ambient", ambientColor);
+		LightingShader.SetVec3("light.diffuse", diffuseColor);
 		
+
 		glfwPollEvents();//checks if any events are triggered like input
 
 		glm::mat4 view = OurCamera.GetViewMatrix();

@@ -50,6 +50,7 @@
     <None Include="LampFragment.glsl">
       <Filter>Shaders</Filter>
     </None>
+    <None Include="..\README.md" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Shader.h">

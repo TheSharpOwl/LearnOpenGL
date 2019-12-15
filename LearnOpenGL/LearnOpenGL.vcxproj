@@ -143,6 +143,7 @@
     <ClCompile Include="Source.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <None Include="..\README.md" />
     <None Include="ColorsFragment.glsl" />
     <None Include="ColorsVertex.glsl" />
     <None Include="FragmentShader.glsl" />
