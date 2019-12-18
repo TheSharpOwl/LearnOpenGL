@@ -234,8 +234,11 @@ int main()
 	glm::vec3 LightPos(2.0f, 0.f, 2.0f);
 
 	//texture things
-	std::string texturePath = "resources/textures/container2.png";
-	unsigned int diffuseMap = loadTexture(texturePath.c_str());
+	std::string woodenTexturePath = "resources/textures/container2.png";
+	unsigned int diffuseMap = loadTexture(woodenTexturePath.c_str());
+
+	std::string steelTexturePath = "resources/textures/container2_specular.png";
+	unsigned int specularMap = loadTexture(steelTexturePath.c_str());
 	double time = 0.0;
 
 	LightingShader.Use();
@@ -264,7 +267,7 @@ int main()
 		LightingShader.SetVec3("light.specular", 1.0f, 1.0f, 1.0f);
 
 		// material properties
-		LightingShader.SetVec3("material.specular", 0.5f, 0.5f, 0.5f);
+		LightingShader.SetInt("material.specular", 1);
 		LightingShader.SetFloat("material.shininess", 64.0f);
 		//material.diffuse is set outside of the rendering loop
 		
@@ -282,6 +285,9 @@ int main()
 		//bind diffuse map
 		glActiveTexture(GL_TEXTURE0);
 		glBindTexture(GL_TEXTURE_2D, diffuseMap);
+
+		glActiveTexture(GL_TEXTURE1);
+		glBindTexture(GL_TEXTURE_2D, specularMap);
 
 		//render the cube
 		glBindVertexArray(CubeVAO);
