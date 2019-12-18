@@ -36,7 +36,7 @@ My codes while learning OpenGL from learnopengl.com, TheCherno on youtube and ot
         4. Normalized : is it between -1 and 1 ? (No need to normalize anything just set it to GL_FALSE and the GPU will do it        for us)
         5. Stride : the offset between each vertex and the another (how much should the pointer jump to go to the next vertex?)
         6. Pointer : Where does this attribute start inside the vertex (offset inside the vertex). !! you should cast the number      to (void*) !!
-    Third, don't forget to call `glEnableVertexAttribArray(i)` where i is the i'th attribute (in the index parameter).
+    - Third, don't forget to call `glEnableVertexAttribArray(i)` where i is the i'th attribute (in the index parameter).
     
 4. We should activate/**use the shader** **before** setting up the **uniforms' values** !
 
