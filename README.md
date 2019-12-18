@@ -40,7 +40,7 @@ My codes while learning OpenGL from learnopengl.com, TheCherno on youtube and ot
     
 4. We should activate/**use the shader** **before** setting up the **uniforms' values** !
 
-5. [How vertex and fragment shaders communicate in OpenGL?] (https://stackoverflow.com/questions/28333019/how-vertex-and-fragment-shaders-communicate-in-opengl)
+5. [How vertex and fragment shaders communicate in OpenGL?](https://stackoverflow.com/questions/28333019/how-vertex-and-fragment-shaders-communicate-in-opengl)
 Since we have in a triangle (for example) three vertices and much more fragments, how does each fragment deal with the info it gets from each vertex differently?
 
 6. Gouraud vs Phong models :
