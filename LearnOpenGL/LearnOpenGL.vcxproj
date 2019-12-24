@@ -155,6 +155,15 @@
     <ClInclude Include="Camera.h" />
     <ClInclude Include="Shader.h" />
   </ItemGroup>
+  <ItemGroup>
+    <Image Include="container.jpg" />
+    <Image Include="resources\textures\650833.png" />
+    <Image Include="resources\textures\awesomeface.png" />
+    <Image Include="resources\textures\container2.png" />
+    <Image Include="resources\textures\container2_specular.png" />
+    <Image Include="resources\textures\lighting_maps_specular_color.png" />
+    <Image Include="resources\textures\matrix.jpg" />
+  </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
   </ImportGroup>

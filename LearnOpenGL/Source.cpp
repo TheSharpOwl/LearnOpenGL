@@ -239,10 +239,15 @@ int main()
 
 	std::string steelTexturePath = "resources/textures/container2_specular.png";
 	unsigned int specularMap = loadTexture(steelTexturePath.c_str());
+
 	double time = 0.0;
 
 	LightingShader.Use();
 	LightingShader.SetInt("material.diffuse", 0);
+	LightingShader.SetInt("material.specular", 1);
+
+	//to solve the exercise
+	LightingShader.SetInt("material.emission", 2);
 
 	//render loop
 	while (!glfwWindowShouldClose(window))
@@ -267,9 +272,7 @@ int main()
 		LightingShader.SetVec3("light.specular", 1.0f, 1.0f, 1.0f);
 
 		// material properties
-		LightingShader.SetInt("material.specular", 1);
 		LightingShader.SetFloat("material.shininess", 64.0f);
-		//material.diffuse is set outside of the rendering loop
 		
 		//Coordinate system :
 		glm::mat4 projection;

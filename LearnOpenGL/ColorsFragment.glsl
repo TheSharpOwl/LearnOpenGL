@@ -52,8 +52,9 @@ void main()
 	vec3 reflectDir = reflect(-lightDir, norm);//norm is like the mirror
 	//This 32 value is the shininess value of the highlight
 	float spec = pow(max(dot(viewDir,reflectDir), 0.0), material.shininess);
-	vec3 specular  = light.specular * spec * texture(material.specular, TexCoords).rgb;
+	vec3 specular  = light.specular * spec * (texture(material.specular, TexCoords).rgb);
 
 	vec3 result = (ambient + diffuse + specular);
+
 	FragColor = vec4(result, 1.0);
 }
