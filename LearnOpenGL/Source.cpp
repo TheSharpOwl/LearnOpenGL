@@ -131,9 +131,9 @@ int main()
 	glfwSetFramebufferSizeCallback(window, framebuffer_size_callback);
 
 	glEnable(GL_DEPTH_TEST);
+	glfwSwapInterval(1);
 
 	Shader LightingShader("ColorsVertex.glsl", "ColorsFragment.glsl");
-	Shader LampShader("LampVertex.glsl", "LampFragment.glsl");
 
 	/*
 	Each vertex attribute takes its data from memory managed by a VBO and which VBO it takes its data from
@@ -190,6 +190,19 @@ int main()
 		-0.5f,  0.5f,  0.5f,  0.0f,  1.0f,  0.0f,  0.0f, 0.0f,
 		-0.5f,  0.5f, -0.5f,  0.0f,  1.0f,  0.0f,  0.0f, 1.0f
 	};
+	glm::vec3 CubePositions[] = 
+	{
+		glm::vec3(0.0f,  0.0f,  0.0f),
+		glm::vec3(2.0f,  5.0f, -15.0f),
+		glm::vec3(-1.5f, -2.2f, -2.5f),
+		glm::vec3(-3.8f, -2.0f, -12.3f),
+		glm::vec3(2.4f, -0.4f, -3.5f),
+		glm::vec3(-1.7f,  3.0f, -7.5f),
+		glm::vec3(1.3f, -2.0f, -2.5f),
+		glm::vec3(1.5f,  2.0f, -2.5f),
+		glm::vec3(1.5f,  0.2f, -1.5f),
+		glm::vec3(-1.3f,  1.0f, -1.5f)
+	};
 
 	//VBO is the same for both, the light and the cubes
 	unsigned int VBO, CubeVAO;
@@ -223,13 +236,6 @@ int main()
 	glGenVertexArrays(1, &LightVAO);
 	glBindVertexArray(LightVAO);
 
-	//find the VBO (no need to fill it, it contains all the needed information)
-	glBindBuffer(GL_ARRAY_BUFFER, VBO);
-
-	//we're ignoring the last 3 floats (the face normal coordinates)
-	glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 8 * sizeof(float), (void*)0);
-	glEnableVertexAttribArray(0); // not 1 because this is the light, it's not a part of the cubes' vertex
-
 	const int Width = 800, Height = 600;
 	glm::vec3 LightPos(2.0f, 0.f, 2.0f);
 
@@ -246,8 +252,7 @@ int main()
 	LightingShader.SetInt("material.diffuse", 0);
 	LightingShader.SetInt("material.specular", 1);
 
-	//to solve the exercise
-	LightingShader.SetInt("material.emission", 2);
+	LightingShader.SetVec3("light.direction", -0.2f, -1.0f, -0.3f);
 
 	//render loop
 	while (!glfwWindowShouldClose(window))
@@ -281,9 +286,19 @@ int main()
 		LightingShader.SetMat4("projection", projection);
 		LightingShader.SetMat4("view", view);
 
-		//world transformation
-		glm::mat4 model = glm::mat4(1.0f);
-		LightingShader.SetMat4("model", model);
+		//render the cube
+		glBindVertexArray(CubeVAO);
+		//world transformation and showing all the cubes
+		for (unsigned int i = 0; i < 10; i++)
+		{
+			glm::mat4 model = glm::mat4(1.0f);
+			model = glm::translate(model, CubePositions[i]);
+			float angle = 20.0f * i;
+			model = glm::rotate(model, glm::radians(angle), glm::vec3(1.0f, 0.3f, 0.5f));
+			LightingShader.SetMat4("model", model);
+
+			glDrawArrays(GL_TRIANGLES, 0, 36);
+		}
 
 		//bind diffuse map
 		glActiveTexture(GL_TEXTURE0);
@@ -292,29 +307,7 @@ int main()
 		glActiveTexture(GL_TEXTURE1);
 		glBindTexture(GL_TEXTURE_2D, specularMap);
 
-		//render the cube
-		glBindVertexArray(CubeVAO);
-		glDrawArrays(GL_TRIANGLES, 0, 36);
-
 		glfwPollEvents();//checks if any events are triggered like input
-
-		//draw the lamp
-		LampShader.Use();
-		LampShader.SetMat4("projection", projection);
-		LampShader.SetMat4("view", view);
-
-		const double  Pi = 3.14159265358979323846;
-		time += 0.001;
-		LightPos.x = sqrt(8.0) * cos(time) + 1.0;
-		LightPos.z = sqrt(8.0) * sin(time) + 1.0;
-
-		model = glm::mat4(1.f);
-		model = glm::translate(model, LightPos);
-		model = glm::scale(model, glm::vec3(0.2f)); // a smaller cube
-		LampShader.SetMat4("model", model);
-
-		glBindVertexArray(LightVAO);
-		glDrawArrays(GL_TRIANGLES, 0, 36);
 
 
 		glfwSwapBuffers(window);
@@ -322,7 +315,6 @@ int main()
 	}
 
 	glDeleteVertexArrays(1, &CubeVAO);
-	glDeleteVertexArrays(1, &LightVAO);
 	glDeleteBuffers(1, &VBO);
 
 	glfwTerminate();

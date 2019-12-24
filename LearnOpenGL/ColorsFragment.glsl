@@ -8,8 +8,10 @@ struct Material
 };
 struct Light 
 {
-    vec3 position;
+   // vec3 position;
+   /// commented because it is not necessary when using directional lights
   
+	vec3 direction;
     vec3 ambient;
     vec3 diffuse;
     vec3 specular;
@@ -28,19 +30,21 @@ uniform Light light;
 
 void main()
 {
+
 	///If you're a bit stubborn and still want to set the ambient colors to a different value
 	///(other than the diffuse value) you can keep the ambient vec3,
 	///but then the ambient colors would still remain the same for the entire object.
 	///To get different ambient values for each fragment you'd have to use another
 	///texture for ambient values alone.
 	
+	vec3 lightDir = normalize(-light.direction);
+
 	//ambient 
 	vec3 ambient = light.ambient * (texture(material.diffuse, TexCoords).rgb);
 
 	//diffuse
 	vec3 norm = normalize(Normal);
 	//light pos direction is from the surface to the light
-	vec3 lightDir = normalize(light.position - FragPos);
 	//max in glsl can compare int and double/float...
 	float diff = max(dot(norm,lightDir),0.0);
 	//diffuse becomes more as the angle between the light and the normal becomes smaller
