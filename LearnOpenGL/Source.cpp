@@ -267,6 +267,7 @@ int main()
 	LightingShader.SetVec3("light.position", OurCamera.Position);
 	LightingShader.SetVec3("light.direction", OurCamera.Front);
 	LightingShader.SetFloat("light.cutOff", glm::cos(glm::radians(12.5f)));
+	LightingShader.SetFloat("light.outerCutOff", glm::cos(glm::radians(17.5f)));
 
 	//render loop
 	while (!glfwWindowShouldClose(window))

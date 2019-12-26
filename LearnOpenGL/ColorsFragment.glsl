@@ -11,6 +11,7 @@ struct Light
 	vec3 position;
 	vec3 direction;
 	float cutOff;
+	float outerCutOff;
 
     vec3 ambient;
     vec3 diffuse;
@@ -38,13 +39,9 @@ void main()
 	///texture for ambient values alone.
 	vec3 lightDir = normalize(light.position - FragPos);
 	float theta = dot(lightDir, normalize(-light.direction));
+	float epsilon = light.cutOff - light.outerCutOff;
+	float intensity = clamp((theta - light.outerCutOff) / epsilon, 0.0, 1.0);
 
-	if(theta < light.cutOff)//the comparsion sign is reversed because we're comparing cos of the angles
-	{			
-		// if the angle is not approperiate just use the ambient light so it won't be completely dark
-		FragColor = vec4(light.ambient * vec3(texture(material.diffuse, TexCoords)), 1.0);
-		return;
-	}
 	//or do the normal calculations
 	vec3 norm = normalize(Normal);
 	//max in glsl can compare int and double/float...
@@ -62,6 +59,9 @@ void main()
 	//This 32 value is the shininess value of the highlight
 	float spec = pow(max(dot(viewDir,reflectDir), 0.0), material.shininess);
 	vec3 specular  = light.specular * spec * (texture(material.specular, TexCoords).rgb);
+
+	diffuse *= intensity;
+	specular *= intensity;
 
 	vec3 result = (ambient + diffuse + specular);
 
