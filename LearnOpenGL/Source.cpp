@@ -134,6 +134,7 @@ int main()
 	glfwSwapInterval(1);
 
 	Shader LightingShader("ColorsVertex.glsl", "ColorsFragment.glsl");
+	Shader LampShader("LampVertex.glsl", "LampFragment.glsl");
 
 	/*
 	Each vertex attribute takes its data from memory managed by a VBO and which VBO it takes its data from
@@ -230,11 +231,16 @@ int main()
 	glEnableVertexAttribArray(2);
 
 	//------- The light part -------
-
-	//configuration of light's VAO (VBO is the same for the light in this case)
 	unsigned int LightVAO;
 	glGenVertexArrays(1, &LightVAO);
 	glBindVertexArray(LightVAO);
+
+
+	//find the VBO (no need to fill it, it contains all the needed information)
+	glBindBuffer(GL_ARRAY_BUFFER, VBO);
+
+	glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 8 * sizeof(float), (void*)0);
+	glEnableVertexAttribArray(0);
 
 	const int Width = 800, Height = 600;
 	glm::vec3 LightPos(2.0f, 0.f, 2.0f);
@@ -252,7 +258,15 @@ int main()
 	LightingShader.SetInt("material.diffuse", 0);
 	LightingShader.SetInt("material.specular", 1);
 
-	LightingShader.SetVec3("light.direction", -0.2f, -1.0f, -0.3f);
+	// light properties
+	LightingShader.SetVec3("light.ambient", 0.2f, 0.2f, 0.2f);
+	LightingShader.SetVec3("light.diffuse", 0.5f, 0.5f, 0.5f);
+	LightingShader.SetVec3("light.specular", 1.0f, 1.0f, 1.0f);
+	LightingShader.SetFloat("material.shininess", 64.0f);
+
+	LightingShader.SetVec3("light.position", OurCamera.Position);
+	LightingShader.SetVec3("light.direction", OurCamera.Front);
+	LightingShader.SetFloat("light.cutOff", glm::cos(glm::radians(12.5f)));
 
 	//render loop
 	while (!glfwWindowShouldClose(window))
@@ -271,13 +285,8 @@ int main()
 		LightingShader.SetVec3("light.position", LightPos);
 		LightingShader.SetVec3("viewPos", OurCamera.Position);
 
-		// light properties
-		LightingShader.SetVec3("light.ambient", 0.2f, 0.2f, 0.2f);
-		LightingShader.SetVec3("light.diffuse", 0.5f, 0.5f, 0.5f);
-		LightingShader.SetVec3("light.specular", 1.0f, 1.0f, 1.0f);
 
 		// material properties
-		LightingShader.SetFloat("material.shininess", 64.0f);
 		
 		//Coordinate system :
 		glm::mat4 projection;
@@ -286,12 +295,21 @@ int main()
 		LightingShader.SetMat4("projection", projection);
 		LightingShader.SetMat4("view", view);
 
+		glm::mat4 model;
+
+		//bind diffuse map
+		glActiveTexture(GL_TEXTURE0);
+		glBindTexture(GL_TEXTURE_2D, diffuseMap);
+
+		glActiveTexture(GL_TEXTURE1);
+		glBindTexture(GL_TEXTURE_2D, specularMap);
+
 		//render the cube
 		glBindVertexArray(CubeVAO);
 		//world transformation and showing all the cubes
 		for (unsigned int i = 0; i < 10; i++)
 		{
-			glm::mat4 model = glm::mat4(1.0f);
+			model = glm::mat4(1.0f);
 			model = glm::translate(model, CubePositions[i]);
 			float angle = 20.0f * i;
 			model = glm::rotate(model, glm::radians(angle), glm::vec3(1.0f, 0.3f, 0.5f));
@@ -300,12 +318,24 @@ int main()
 			glDrawArrays(GL_TRIANGLES, 0, 36);
 		}
 
-		//bind diffuse map
-		glActiveTexture(GL_TEXTURE0);
-		glBindTexture(GL_TEXTURE_2D, diffuseMap);
 
-		glActiveTexture(GL_TEXTURE1);
-		glBindTexture(GL_TEXTURE_2D, specularMap);
+		// draw the lamp
+		LampShader.Use();
+		LampShader.SetMat4("projection", projection);
+		LampShader.SetMat4("view", view);
+
+		const double  Pi = 3.14159265358979323846;
+		time += 0.02f;
+		LightPos.x = sqrt(8.0) * cos(time) + 2.0;
+		LightPos.z = sqrt(8.0) * sin(time) + 2.0;
+
+		model = glm::mat4(1.f);
+		model = glm::translate(model, LightPos);
+		model = glm::scale(model, glm::vec3(0.2f)); // a smaller cube
+		LampShader.SetMat4("model", model);
+
+		glBindVertexArray(LightVAO);
+		glDrawArrays(GL_TRIANGLES, 0, 36);
 
 		glfwPollEvents();//checks if any events are triggered like input
 
@@ -315,6 +345,7 @@ int main()
 	}
 
 	glDeleteVertexArrays(1, &CubeVAO);
+	glDeleteVertexArrays(1, &LightVAO);
 	glDeleteBuffers(1, &VBO);
 
 	glfwTerminate();

@@ -8,10 +8,10 @@ struct Material
 };
 struct Light 
 {
-   // vec3 position;
-   /// commented because it is not necessary when using directional lights
-  
+	vec3 position;
 	vec3 direction;
+	float cutOff;
+
     vec3 ambient;
     vec3 diffuse;
     vec3 specular;
@@ -36,20 +36,25 @@ void main()
 	///but then the ambient colors would still remain the same for the entire object.
 	///To get different ambient values for each fragment you'd have to use another
 	///texture for ambient values alone.
-	
-	vec3 lightDir = normalize(-light.direction);
+	vec3 lightDir = normalize(light.position - FragPos);
+	float theta = dot(lightDir, normalize(-light.direction));
 
-	//ambient 
-	vec3 ambient = light.ambient * (texture(material.diffuse, TexCoords).rgb);
-
-	//diffuse
+	if(theta < light.cutOff)//the comparsion sign is reversed because we're comparing cos of the angles
+	{			
+		// if the angle is not approperiate just use the ambient light so it won't be completely dark
+		FragColor = vec4(light.ambient * vec3(texture(material.diffuse, TexCoords)), 1.0);
+		return;
+	}
+	//or do the normal calculations
 	vec3 norm = normalize(Normal);
-	//light pos direction is from the surface to the light
 	//max in glsl can compare int and double/float...
 	float diff = max(dot(norm,lightDir),0.0);
+	//ambient 
+	vec3 ambient = light.ambient * (texture(material.diffuse, TexCoords).rgb);
+	//diffuse
+	//light pos direction is from the surface to the light
 	//diffuse becomes more as the angle between the light and the normal becomes smaller
 	vec3 diffuse = light.diffuse * diff * vec3(texture(material.diffuse, TexCoords));
-
 	//specular
 	vec3 viewDir = normalize(viewPos - FragPos);
 	//light pos direction is from the surface to the light as I said, so we have to inverse it to get the reflection
