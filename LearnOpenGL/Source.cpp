@@ -94,6 +94,8 @@ bool FirstMouse = true;
 Camera OurCamera(glm::vec3(0.f,0.f,3.f));
 float LastX = 400, LastY = 300;
 
+void SetLightingShaderUniforms(Shader& lightingShader, glm::vec3 pointLightPositions[]);
+
 int main()
 {
 	
@@ -143,7 +145,7 @@ int main()
 	before calling glVertexAttribPointer vertex attribute 0 is now associated with its vertex data.
 	*/
 
-	//6 suquares, 2 triangles for each to draw a cube
+	//6 squares, 2 triangles for each to draw a cube
 	//the second 3 positions in each line are for the surface normals
 
 	float Vertices[] = 
@@ -191,6 +193,7 @@ int main()
 		-0.5f,  0.5f,  0.5f,  0.0f,  1.0f,  0.0f,  0.0f, 0.0f,
 		-0.5f,  0.5f, -0.5f,  0.0f,  1.0f,  0.0f,  0.0f, 1.0f
 	};
+
 	glm::vec3 CubePositions[] = 
 	{
 		glm::vec3(0.0f,  0.0f,  0.0f),
@@ -205,6 +208,13 @@ int main()
 		glm::vec3(-1.3f,  1.0f, -1.5f)
 	};
 
+	// positions of the point lights
+	glm::vec3 PointLightPositions[] = {
+		glm::vec3(0.7f,  0.2f,  2.0f),
+		glm::vec3(2.3f, -3.3f, -4.0f),
+		glm::vec3(-4.0f,  2.0f, -12.0f),
+		glm::vec3(0.0f,  0.0f, -3.0f)
+	};
 	//VBO is the same for both, the light and the cubes
 	unsigned int VBO, CubeVAO;
 
@@ -253,21 +263,11 @@ int main()
 	unsigned int specularMap = loadTexture(steelTexturePath.c_str());
 
 	double time = 0.0;
-
 	LightingShader.Use();
 	LightingShader.SetInt("material.diffuse", 0);
 	LightingShader.SetInt("material.specular", 1);
+	SetLightingShaderUniforms(LightingShader, PointLightPositions);
 
-	// light properties
-	LightingShader.SetVec3("light.ambient", 0.2f, 0.2f, 0.2f);
-	LightingShader.SetVec3("light.diffuse", 0.5f, 0.5f, 0.5f);
-	LightingShader.SetVec3("light.specular", 1.0f, 1.0f, 1.0f);
-	LightingShader.SetFloat("material.shininess", 64.0f);
-
-	LightingShader.SetVec3("light.position", OurCamera.Position);
-	LightingShader.SetVec3("light.direction", OurCamera.Front);
-	LightingShader.SetFloat("light.cutOff", glm::cos(glm::radians(12.5f)));
-	LightingShader.SetFloat("light.outerCutOff", glm::cos(glm::radians(17.5f)));
 
 	//render loop
 	while (!glfwWindowShouldClose(window))
@@ -283,12 +283,8 @@ int main()
 
 		//use the shader before setting up the uniforms' values !!!
 		LightingShader.Use();
-		LightingShader.SetVec3("light.position", LightPos);
 		LightingShader.SetVec3("viewPos", OurCamera.Position);
-
-
-		// material properties
-		
+		LightingShader.SetFloat("material.shininess", 32.f);
 		//Coordinate system :
 		glm::mat4 projection;
 		glm::mat4 view = OurCamera.GetViewMatrix();
@@ -297,6 +293,8 @@ int main()
 		LightingShader.SetMat4("view", view);
 
 		glm::mat4 model;
+		model = glm::mat4(1.0f);
+		LightingShader.SetMat4("model", model);
 
 		//bind diffuse map
 		glActiveTexture(GL_TEXTURE0);
@@ -315,7 +313,6 @@ int main()
 			float angle = 20.0f * i;
 			model = glm::rotate(model, glm::radians(angle), glm::vec3(1.0f, 0.3f, 0.5f));
 			LightingShader.SetMat4("model", model);
-
 			glDrawArrays(GL_TRIANGLES, 0, 36);
 		}
 
@@ -324,23 +321,19 @@ int main()
 		LampShader.Use();
 		LampShader.SetMat4("projection", projection);
 		LampShader.SetMat4("view", view);
-
-		const double  Pi = 3.14159265358979323846;
-		time += 0.02f;
-		LightPos.x = sqrt(8.0) * cos(time) + 2.0;
-		LightPos.z = sqrt(8.0) * sin(time) + 2.0;
-
-		model = glm::mat4(1.f);
-		model = glm::translate(model, LightPos);
-		model = glm::scale(model, glm::vec3(0.2f)); // a smaller cube
-		LampShader.SetMat4("model", model);
-
 		glBindVertexArray(LightVAO);
-		glDrawArrays(GL_TRIANGLES, 0, 36);
+
+		for (int i = 0; i < 4; i++)
+		{
+			model = glm::mat4(1.0f);
+			model = glm::translate(model, PointLightPositions[i]);
+			model = glm::scale(model, glm::vec3(0.2f)); // a smaller cube
+			LampShader.SetMat4("model", model);
+			glDrawArrays(GL_TRIANGLES, 0, 36);
+		}
+
 
 		glfwPollEvents();//checks if any events are triggered like input
-
-
 		glfwSwapBuffers(window);
 		glfwPollEvents();
 	}
@@ -351,6 +344,50 @@ int main()
 
 	glfwTerminate();
 	return 0;
+}
+
+void SetLightingShaderUniforms(Shader &lightingShader, glm::vec3 pointLightPositions[])
+{
+	lightingShader.Use();
+	//directional Light
+	lightingShader.SetVec3("dirLight.direction", -0.2f, -1.0f, -0.3f);
+	lightingShader.SetVec3("dirLight.ambient", 0.05f, 0.05f, 0.05f);
+	lightingShader.SetVec3("dirLight.diffuse", 0.4f, 0.4f, 0.4f);
+	lightingShader.SetVec3("dirLight.specular", 0.5f, 0.5f, 0.5f);
+
+	// point light 1
+	lightingShader.SetVec3("pointLights[0].position", pointLightPositions[0]);
+	lightingShader.SetVec3("pointLights[0].ambient", 0.05f, 0.05f, 0.05f);
+	lightingShader.SetVec3("pointLights[0].diffuse", 0.8f, 0.8f, 0.8f);
+	lightingShader.SetVec3("pointLights[0].specular", 1.0f, 1.0f, 1.0f);
+	lightingShader.SetFloat("pointLights[0].constant", 1.0f);
+	lightingShader.SetFloat("pointLights[0].linear", 0.09);
+	lightingShader.SetFloat("pointLights[0].quadratic", 0.032);
+	// point light 2
+	lightingShader.SetVec3("pointLights[1].position", pointLightPositions[1]);
+	lightingShader.SetVec3("pointLights[1].ambient", 0.05f, 0.05f, 0.05f);
+	lightingShader.SetVec3("pointLights[1].diffuse", 0.8f, 0.8f, 0.8f);
+	lightingShader.SetVec3("pointLights[1].specular", 1.0f, 1.0f, 1.0f);
+	lightingShader.SetFloat("pointLights[1].constant", 1.0f);
+	lightingShader.SetFloat("pointLights[1].linear", 0.09);
+	lightingShader.SetFloat("pointLights[1].quadratic", 0.032);
+	// point light 3
+	lightingShader.SetVec3("pointLights[2].position", pointLightPositions[2]);
+	lightingShader.SetVec3("pointLights[2].ambient", 0.05f, 0.05f, 0.05f);
+	lightingShader.SetVec3("pointLights[2].diffuse", 0.8f, 0.8f, 0.8f);
+	lightingShader.SetVec3("pointLights[2].specular", 1.0f, 1.0f, 1.0f);
+	lightingShader.SetFloat("pointLights[2].constant", 1.0f);
+	lightingShader.SetFloat("pointLights[2].linear", 0.09);
+	lightingShader.SetFloat("pointLights[2].quadratic", 0.032);
+	// point light 4
+	lightingShader.SetVec3("pointLights[3].position", pointLightPositions[3]);
+	lightingShader.SetVec3("pointLights[3].ambient", 0.05f, 0.05f, 0.05f);
+	lightingShader.SetVec3("pointLights[3].diffuse", 0.8f, 0.8f, 0.8f);
+	lightingShader.SetVec3("pointLights[3].specular", 1.0f, 1.0f, 1.0f);
+	lightingShader.SetFloat("pointLights[3].constant", 1.0f);
+	lightingShader.SetFloat("pointLights[3].linear", 0.09);
+	lightingShader.SetFloat("pointLights[3].quadratic", 0.032);
+
 }
 //if we press the escape key set the 'should close' to true so the window will close
 void processInput(GLFWwindow* window)

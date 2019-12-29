@@ -60,6 +60,8 @@ My codes while learning OpenGL from learnopengl.com, TheCherno on youtube and ot
 
 12. Attenuation : Reducing the intensity of light, over the distance a light ray travels.
 
+13.[How does glDrawArrays know what to draw?](https://stackoverflow.com/questions/19102180/how-does-gldrawarrays-know-what-to-draw)
+
 
 ## References and useful resources
 
