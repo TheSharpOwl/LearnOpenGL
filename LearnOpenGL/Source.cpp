@@ -129,7 +129,7 @@ int main()
 	*so we effectively map from the range (-1 to 1) to (0, 800) and (0, 600). 
 	*/
 
-	//register so the function so that it gets called everytime we resize the window
+	//register so the function so that it gets called every time we resize the window	
 	glfwSetFramebufferSizeCallback(window, framebuffer_size_callback);
 
 	glEnable(GL_DEPTH_TEST);
@@ -295,6 +295,9 @@ int main()
 		glm::mat4 model;
 		model = glm::mat4(1.0f);
 		LightingShader.SetMat4("model", model);
+		//to make the spot light move with the camera (like the viewer is carrying it)
+		LightingShader.SetVec3("spotLight.position", OurCamera.Position);
+		LightingShader.SetVec3("spotLight.direction", OurCamera.Front);
 
 		//bind diffuse map
 		glActiveTexture(GL_TEXTURE0);
@@ -387,6 +390,18 @@ void SetLightingShaderUniforms(Shader &lightingShader, glm::vec3 pointLightPosit
 	lightingShader.SetFloat("pointLights[3].constant", 1.0f);
 	lightingShader.SetFloat("pointLights[3].linear", 0.09);
 	lightingShader.SetFloat("pointLights[3].quadratic", 0.032);
+
+	// spot light
+	lightingShader.SetVec3("spotLight.position", OurCamera.Position);
+	lightingShader.SetVec3("spotLight.direction", OurCamera.Front);
+	lightingShader.SetVec3("spotLight.ambient", 0.0f, 0.0f, 0.0f);
+	lightingShader.SetVec3("spotLight.diffuse", 1.0f, 1.0f, 1.0f);
+	lightingShader.SetVec3("spotLight.specular", 1.0f, 1.0f, 1.0f);
+	/*lightingShader.SetFloat("spotLight.constant", 1.0f);
+	lightingShader.SetFloat("spotLight.linear", 0.09);
+	lightingShader.SetFloat("spotLight.quadratic", 0.032);*/
+	lightingShader.SetFloat("spotLight.cutOff", glm::cos(glm::radians(12.5f)));
+	lightingShader.SetFloat("spotLight.outerCutOff", glm::cos(glm::radians(15.0f)));
 
 }
 //if we press the escape key set the 'should close' to true so the window will close
