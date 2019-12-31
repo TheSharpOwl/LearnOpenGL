@@ -397,9 +397,9 @@ void SetLightingShaderUniforms(Shader &lightingShader, glm::vec3 pointLightPosit
 	lightingShader.SetVec3("spotLight.ambient", 0.0f, 0.0f, 0.0f);
 	lightingShader.SetVec3("spotLight.diffuse", 1.0f, 1.0f, 1.0f);
 	lightingShader.SetVec3("spotLight.specular", 1.0f, 1.0f, 1.0f);
-	/*lightingShader.SetFloat("spotLight.constant", 1.0f);
+	lightingShader.SetFloat("spotLight.constant", 1.0f);
 	lightingShader.SetFloat("spotLight.linear", 0.09);
-	lightingShader.SetFloat("spotLight.quadratic", 0.032);*/
+	lightingShader.SetFloat("spotLight.quadratic", 0.032);
 	lightingShader.SetFloat("spotLight.cutOff", glm::cos(glm::radians(12.5f)));
 	lightingShader.SetFloat("spotLight.outerCutOff", glm::cos(glm::radians(15.0f)));
 
