@@ -1,9 +1,13 @@
 # LearnOpenGL
+
 My codes while learning OpenGL from learnopengl.com, TheCherno on youtube and other resources
 
 
 ![](https://media.giphy.com/media/UVBDc7NgBRuIlZxi8K/giphy.gif)
 
+# Notes for other compiler versions
+
+Assimp might not work here because I built it with VS 2019 (check how to build assimp in the FAQs)
 
 ## Important and Frequently Asked Questions for OpenGL
 
@@ -60,8 +64,9 @@ My codes while learning OpenGL from learnopengl.com, TheCherno on youtube and ot
 
 12. Attenuation : Reducing the intensity of light, over the distance a light ray travels.
 
-13.[How does glDrawArrays know what to draw?](https://stackoverflow.com/questions/19102180/how-does-gldrawarrays-know-what-to-draw)
+13. [How does glDrawArrays know what to draw?](https://stackoverflow.com/questions/19102180/how-does-gldrawarrays-know-what-to-draw)
 
+15. [Adding Assimp to VS (building from source to get .lib and .dll files)](https://www.youtube.com/watch?v=W_Ey_YPUjMk)
 
 ## References and useful resources
 
