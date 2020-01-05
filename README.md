@@ -46,7 +46,7 @@ Assimp might not work here because I built it with VS 2019 (check how to build a
 
 5. [How vertex and fragment shaders communicate in OpenGL? Since we have in a triangle (for example) three vertices and much more fragments, how does each fragment deal with the info it gets from each vertex differently?](https://stackoverflow.com/questions/28333019/how-vertex-and-fragment-shaders-communicate-in-opengl)
 
-6. Gouraud vs Phong models :
+6. **Gouraud vs Phong models** :
 
     When the Phong lighting model is implemented in the vertex shader it is called Gouraud shading instead of Phong shading. Note that due to the interpolation the lighting looks a bit off. The Phong shading gives much smoother lighting results. 
 
@@ -56,17 +56,19 @@ Assimp might not work here because I built it with VS 2019 (check how to build a
 
 9. [glfwSwapInterval](https://www.glfw.org/docs/3.1/window.html#buffer_swap) : which makes the movement smoother because it enables [V-Sync](https://www.digitaltrends.com/computing/what-is-vsync/). For additional info check [this question](https://discourse.glfw.org/t/newbie-questions-trying-to-understand-glfwswapinterval/1287)
 
-10. Components of Phong shading:
+10. **Components of Phong shading:**
 
 ![](https://imgur.com/z95AgKq.png)
 
 11. [Sampler2D](https://stackoverflow.com/questions/10868958/what-does-sampler2d-store) (which is used to store images for textures) in OpenGL is an [**Opaque Type**](https://stackoverflow.com/questions/2301454/what-defines-an-opaque-type-in-c-and-when-are-they-necessary-and-or-useful) which is why you can only use it as a uniform in the shaders.
 
-12. Attenuation : Reducing the intensity of light, over the distance a light ray travels.
+12. **Attenuation** : Reducing the intensity of light, over the distance a light ray travels.
 
 13. [How does glDrawArrays know what to draw?](https://stackoverflow.com/questions/19102180/how-does-gldrawarrays-know-what-to-draw)
 
 15. [Adding Assimp to VS (building from source to get .lib and .dll files)](https://www.youtube.com/watch?v=W_Ey_YPUjMk)
+
+16. **offsetof(s,m)** : Preprocessor directive that takes as its first argument a struct and as its second argument a variable                              name of the struct. The macro returns the byte offset of that variable from the start of the struct.
 
 ## References and useful resources
 
