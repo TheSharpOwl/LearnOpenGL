@@ -9,7 +9,11 @@ class Mesh;
 class aiNode;
 class aiMesh;
 class aiScene;
+struct Texture;
+class aiMaterial;
+class aiTextureType;
 
+unsigned int TextureFromFile(const char* path, const std::string& directory, bool gamma = false);
 
 class Model
 {

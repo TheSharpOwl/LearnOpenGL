@@ -10,6 +10,7 @@
 
 class Shader;
 
+
 struct Vertex
 {
 	glm::vec3 Postion;

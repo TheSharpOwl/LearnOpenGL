@@ -17,7 +17,7 @@ void Mesh::Draw(Shader shader)
 	unsigned int normalNr = 1;
 	unsigned int heightNr = 1;
 
-	for (unsigned int i = 0; i < textures.size; i++)
+	for (unsigned int i = 0; i < textures.size(); i++)
 	{
 		glActiveTexture(GL_TEXTURE0 + i);//active the proper texture unit before binding
 		//retrieve the texture number (the N in the diffuse_textureN)
