@@ -70,6 +70,18 @@ Assimp might not work here because I built it with VS 2019 (check how to build a
 
 16. **offsetof(s,m)** : Preprocessor directive that takes as its first argument a struct and as its second argument a variable                              name of the struct. The macro returns the byte offset of that variable from the start of the struct.
 
+## Issues I had :
+
+1. Importing Assimp was not compiling at first then I got linking errors (At the end I got .dll not found then solved also)
+    **Solution:**
+    - First, when you **cmake** the Assimp like the video in 15, it might do it for x64 config only so to force it on doing it for x86 [read here] (https://stackoverflow.com/questions/28350214/how-to-build-x86-and-or-x64-on-windows-from-command-line-with-cmake)
+
+    - Second, After doing the build step through VS, copying files to the dictionary and configrating include and linker setting,  it will complain about not finding **config.h** which you should copy from the include folder **but in the projext you built to make the libray files** to the include dictionary with its other friends :P
+
+    - Third, Now it will compile (without linking errors because you built the library for 86x supposing that your project was x86)
+    but it will give an error after compiling and running which says that it couldn't find the .dll and the solution is copying the .dll to the .exe dictionary (which is in projectFolder\Debug) and now it should work (hope it helps)
+
+
 ## References and useful resources
 
 1. [docs.gl](http://docs.gl/)
