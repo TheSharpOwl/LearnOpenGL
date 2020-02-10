@@ -1,17 +1,20 @@
 #pragma once
 
-#include <vector>
-#include <string>
+#include <assimp/Importer.hpp>
+#include <assimp/scene.h>
+#include <assimp/postprocess.h>
 
-//forward declarations
-class Shader;
-class Mesh;
-class aiNode;
-class aiMesh;
-class aiScene;
-struct Texture;
-class aiMaterial;
-class aiTextureType;
+#include<vector>
+#include<string>
+
+#include <glad/glad.h> 
+
+#include <glm/glm.hpp>
+#include <glm/gtc/matrix_transform.hpp>
+#include "stb_image.h"
+
+#include "Shader.h"
+#include "Mesh.h"
 
 unsigned int TextureFromFile(const char* path, const std::string& directory, bool gamma = false);
 
@@ -29,6 +32,7 @@ public:
 
 private:
 
+	std::vector<Texture> textures_loaded;
 	std::vector<Mesh> meshes;
 	std::string directory;
 

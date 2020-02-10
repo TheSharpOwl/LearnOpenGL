@@ -1,19 +1,6 @@
+#pragma once
 
 #include "Model.h"
-#include "Shader.h"
-#include "Mesh.h"
-
-#include <assimp/Importer.hpp>
-#include <assimp/scene.h>
-#include <assimp/postprocess.h>
-
-#include<vector>
-
-#include <glad/glad.h> 
-
-#include <glm/glm.hpp>
-#include <glm/gtc/matrix_transform.hpp>
-#include "stb_image.h"
 
 void Model::Draw(Shader shader)
 {
@@ -28,10 +15,10 @@ void Model::loadModel(std::string path)
 	should transform all the model's primitive shapes to triangles. The aiProcess_FlipUVs flips the
 	texture coordinates on the y-axis where necessary during processing (you might remember from
 	the Textures tutorial that most images in OpenGL were reversed around the y-axis so this
-	little postprocessing option fixes that for us)
+	little post-processing option fixes that for us)
 	*/
 	Assimp::Importer import;
-	const aiScene* scene = import.ReadFile(path, aiProcess_Triangulate | aiProcess_FlipUVs);
+	const aiScene* scene = import.ReadFile(path, aiProcess_Triangulate | aiProcess_FlipUVs | aiProcess_CalcTangentSpace);
 
 	if (!scene || scene->mFlags & AI_SCENE_FLAGS_INCOMPLETE || !scene->mRootNode)
 	{
@@ -121,24 +108,37 @@ and then loads and generates the texture and stores the information in a Vertex 
 std::vector<Texture> Model::loadMaterialTextures(aiMaterial* mat, aiTextureType type, std::string typeName)
 {
 	std::vector<Texture> textures;
-	for (unsigned int i = 0; i < mat->GetTextureCount(type); i++)
-	{
-		aiString str;
-		mat->GetTexture(type, i, &str);
-		Texture texture;
-		texture.id = TextureFromFile(str.C_Str(), directory);
-		texture.type = typeName;
-		texture.path = str;
-		textures.push_back(texture);
-	}
-
-	return std::vector<Texture>();
+    for(unsigned int i = 0; i < mat->GetTextureCount(type); i++)
+    {
+        aiString str;
+        mat->GetTexture(type, i, &str);
+        bool skip = false;
+        for(unsigned int j = 0; j < textures_loaded.size(); j++)
+        {
+            if(std::strcmp(textures_loaded[j].path.data(), str.C_Str()) == 0)
+            {
+                textures.push_back(textures_loaded[j]);
+                skip = true; 
+                break;
+            }
+        }
+        if(!skip)
+        {   // if texture hasn't been loaded already, load it
+            Texture texture;
+            texture.id = TextureFromFile(str.C_Str(), directory);
+            texture.type = typeName;
+            texture.path = str.C_Str();
+            textures.push_back(texture);
+            textures_loaded.push_back(texture); // add to loaded textures
+        }
+    }
+    return textures;
 }
 
 unsigned int TextureFromFile(const char* path, const std::string& directory, bool gamma)
 {
 	std::string fileName = std::string(path);
-	filename = directory + '/' + fileName;
+	fileName = directory + '/' + fileName;
 	unsigned int textureID;
 	glGenTextures(1, &textureID);
 
