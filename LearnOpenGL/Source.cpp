@@ -14,6 +14,7 @@
 
 #include "Shader.h"
 #include "Camera.h"
+#include "Model.h"
 
 #define STB_IMAGE_IMPLEMENTATION
 #include "stb_image.h"
@@ -268,6 +269,12 @@ int main()
 	LightingShader.SetInt("material.specular", 1);
 	SetLightingShaderUniforms(LightingShader, PointLightPositions);
 
+	//Trying to load the nanosuite model
+	Shader NanoSuiteShader = Shader("ModelVertex.glsl", "ModelFragment.glsl");
+	std::string nanoSuitePath = "nanosuit/nanosuit.obj";
+	Model NanoSuiteModel(nanoSuitePath);
+
+	//nanoSuite.Draw();
 
 	//render loop
 	while (!glfwWindowShouldClose(window))
@@ -281,6 +288,36 @@ int main()
 		glClearColor(0.1f, 0.1f, 0.1f, 1.0f);
 		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
+		NanoSuiteShader.Use();
+		LightingShader.Use();
+
+		glm::mat4 projection;
+		glm::mat4 view = OurCamera.GetViewMatrix();
+		projection = glm::perspective(glm::radians(OurCamera.Zoom), float(Width) / float(Height), 0.1f, 100.f);
+
+		NanoSuiteShader.SetMat4("projection", projection);
+		NanoSuiteShader.SetMat4("view", view);
+
+		glm::mat4 model;
+		model = glm::mat4(1.0f);
+		NanoSuiteShader.SetMat4("model", model);
+
+		NanoSuiteModel.Draw(NanoSuiteShader);
+
+		LightingShader.SetVec3("viewPos", OurCamera.Position);
+		LightingShader.SetFloat("material.shininess", 32.f);
+		//Coordinate system :
+		view = OurCamera.GetViewMatrix();
+		projection = glm::perspective(glm::radians(OurCamera.Zoom), float(Width) / float(Height), 0.1f, 100.f);
+		LightingShader.SetMat4("projection", projection);
+		LightingShader.SetMat4("view", view);
+		model = glm::mat4(1.0f);
+		LightingShader.SetMat4("model", model);
+		//to make the spot light move with the camera (like the viewer is carrying it)
+		LightingShader.SetVec3("spotLight.position", OurCamera.Position);
+		LightingShader.SetVec3("spotLight.direction", OurCamera.Front);
+
+		/*
 		//use the shader before setting up the uniforms' values !!!
 		LightingShader.Use();
 		LightingShader.SetVec3("viewPos", OurCamera.Position);
@@ -334,7 +371,7 @@ int main()
 			LampShader.SetMat4("model", model);
 			glDrawArrays(GL_TRIANGLES, 0, 36);
 		}
-
+		*/
 
 		glfwPollEvents();//checks if any events are triggered like input
 		glfwSwapBuffers(window);

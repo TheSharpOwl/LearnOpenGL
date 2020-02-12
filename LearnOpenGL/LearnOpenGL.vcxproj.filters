@@ -57,6 +57,12 @@
     <None Include="VertexShader.glsl">
       <Filter>Source Files</Filter>
     </None>
+    <None Include="ModelFragment.glsl">
+      <Filter>Shaders</Filter>
+    </None>
+    <None Include="ModelVertex.glsl">
+      <Filter>Shaders</Filter>
+    </None>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Shader.h">

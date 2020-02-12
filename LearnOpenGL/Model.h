@@ -22,7 +22,7 @@ class Model
 {
 public:
 
-	Model(char* path)
+	Model(std::string path)
 	{
 		loadModel(path);
 	}

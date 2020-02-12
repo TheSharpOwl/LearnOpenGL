@@ -2,6 +2,7 @@
 
 My codes while learning OpenGL from learnopengl.com, TheCherno on youtube and other resources
 
+[![Crisis NanoSuit](http://img.youtube.com/vi/N2o2K2RJj7g/0.jpg)](https://www.youtube.com/watch?v=N2o2K2RJj7g "My Assimp Import Library ShowCase")
 
 ![](https://media.giphy.com/media/UVBDc7NgBRuIlZxi8K/giphy.gif)
 
