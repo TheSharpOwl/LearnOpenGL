@@ -71,6 +71,9 @@ Assimp might not work here because I built it with VS 2019 (check how to build a
 
 16. **offsetof(s,m)** : Preprocessor directive that takes as its first argument a struct and as its second argument a variable                              name of the struct. The macro returns the byte offset of that variable from the start of the struct.
 
+17. **Depth Testing**: When depth testing is enabled OpenGL tests the depth value of a fragment against the content of the depth buffer. OpenGL performs a depth test and if this test passes, the depth buffer is updated with the new depth value. If the depth test fails, the fragment is discarded. The screen space coordinates relate directly to the viewport defined by OpenGL's glViewport function and can be accessed via GLSL's built-in gl_FragCoord variable in the fragment shader. The x and y components of gl_FragCoord represent the fragment's screen-space coordinates (with (0,0) being the bottom-left corner). The gl_FragCoord also contains a z-component which contains the actual depth value of the fragment. This z value is the value that is compared to the depth buffer's content. 
+
+
 ## Issues I had :
 
 1. Importing Assimp was not compiling at first then I got linking errors (At the end I got .dll not found then solved also)

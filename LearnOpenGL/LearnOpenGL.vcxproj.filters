@@ -63,6 +63,12 @@
     <None Include="ModelVertex.glsl">
       <Filter>Shaders</Filter>
     </None>
+    <None Include="DepthVertex.glsl">
+      <Filter>Shaders</Filter>
+    </None>
+    <None Include="DepthFragment.glsl">
+      <Filter>Shaders</Filter>
+    </None>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Shader.h">
