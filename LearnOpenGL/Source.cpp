@@ -142,7 +142,7 @@ int main()
 	glEnableVertexAttribArray(1);
 	glVertexAttribPointer(1, 2, GL_FLOAT, GL_FALSE, 5 * sizeof(float), (void*)(3 * sizeof(float)));
 
-	glBindVertexArray(0);
+	glBindVertexArray(0);//unbind the Vertex Array
 
 
 	unsigned int planeVAO, planeVBO;
@@ -165,14 +165,14 @@ int main()
 
 	//load the textures
 	unsigned int cubeTexture = loadTexture("resources/textures/marble.jpg");
-	unsigned int planeTexture = loadTexture("resources/textures/metal.jpg");
+	unsigned int planeTexture = loadTexture("resources/textures/metal.png");
 
 	//shader configuration 
 	shader.Use();
 	shader.SetInt("texture1", 0);
 
 	//rendering loop
-	while (!glfwSetWindowShouldClose(window))
+	while (!glfwWindowShouldClose(window))
 	{
 		float currentFrame = glfwGetTime();
 		deltaTime = currentFrame - lastFrame;
@@ -191,10 +191,34 @@ int main()
 		shader.SetMat4("projection", projection);
 
 		//cubes
+		glBindVertexArray(cubeVAO);
+		glActiveTexture(cubeTexture);
+		glBindTexture(GL_TEXTURE_2D, cubeTexture);
+		model = glm::translate(model, glm::vec3(-1.0f, 0.f, -1.f));
+		shader.SetMat4("model", glm::mat4(1.f));
+		glDrawArrays(GL_TRIANGLES, 0, 36);
 
+		//the foor
+		glBindVertexArray(planeVAO);
+		glActiveTexture(planeTexture);
+		glBindTexture(GL_TEXTURE_2D, planeTexture);
+		shader.SetMat4("model", glm::mat4(1.f));
+		glDrawArrays(GL_TRIANGLES, 0, 6);
+
+		glBindVertexArray(0);
+
+		glfwSwapBuffers(window);
+		glfwPollEvents();
 
 	}
 
+	glDeleteVertexArrays(1, &cubeVAO);
+	glDeleteVertexArrays(1, &planeVAO);
+
+	glDeleteBuffers(1, &cubeVBO);
+	glDeleteBuffers(1, &planeVBO);
+
+	glfwTerminate();
 	return 0;
 }
 
