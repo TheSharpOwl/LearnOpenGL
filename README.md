@@ -75,7 +75,7 @@ Assimp might not work here because I built it with VS 2019 (check how to build a
 
 18. **Z-fighting** : Z-fighting is a common problem with depth buffers and is generally stronger when objects are at a further distance (because the depth buffer has less precision at larger z-values). Z-fighting can't be completely prevented, but there are generally a few tricks that will help to mitigate or completely prevent z-fighting.
 
-[Z-fighting example between the floor and the box base part](https://imgur.com/oYAkgTU.png)
+![Z-fighting example between the floor and the box base part](https://imgur.com/oYAkgTU.png)
 
 ## Issues I had :
 
