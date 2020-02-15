@@ -65,7 +65,7 @@ int main()
 
 	//Depth test settings
 	glEnable(GL_DEPTH_TEST);
-	glDepthFunc(GL_ALWAYS);//always pass the depth test
+	glDepthFunc(GL_LESS);//if the depth is less take it and leave the rest
 
 	//shaders
 	Shader shader("DepthVertex.glsl", "DepthFragment.glsl");
@@ -231,7 +231,8 @@ void setupWindowSettings(GLFWwindow* window)
 	glfwSetFramebufferSizeCallback(window, framebufferSizeCallBack);
 	glfwSetCursorPosCallback(window, mouseCallback);
 	glfwSetScrollCallback(window, scrollCallback);
-
+	//enable v-sync
+	glfwSwapInterval(1);
 	//tell glfw to capture the mouse
 	glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_DISABLED);
 

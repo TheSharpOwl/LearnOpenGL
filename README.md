@@ -73,6 +73,9 @@ Assimp might not work here because I built it with VS 2019 (check how to build a
 
 17. **Depth Testing**: When depth testing is enabled OpenGL tests the depth value of a fragment against the content of the depth buffer. OpenGL performs a depth test and if this test passes, the depth buffer is updated with the new depth value. If the depth test fails, the fragment is discarded. The screen space coordinates relate directly to the viewport defined by OpenGL's glViewport function and can be accessed via GLSL's built-in gl_FragCoord variable in the fragment shader. The x and y components of gl_FragCoord represent the fragment's screen-space coordinates (with (0,0) being the bottom-left corner). The gl_FragCoord also contains a z-component which contains the actual depth value of the fragment. This z value is the value that is compared to the depth buffer's content. 
 
+18. **Z-fighting** : Z-fighting is a common problem with depth buffers and is generally stronger when objects are at a further distance (because the depth buffer has less precision at larger z-values). Z-fighting can't be completely prevented, but there are generally a few tricks that will help to mitigate or completely prevent z-fighting.
+
+[](https://i.imgur.com/oYAkgTU.png)
 
 ## Issues I had :
 
