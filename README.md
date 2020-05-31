@@ -11,13 +11,16 @@ My codes while learning OpenGL from learnopengl.com, TheCherno on youtube and ot
 Assimp might not work here because I built it with VS 2019 (check how to build assimp in the FAQs)
 
 ## Important and Frequently Asked Questions for OpenGL
+1. **Graphics Pipline:**
 
-1. [Use of Vertex Array Objects, Vertex Buffer Objects and Differences Between Them](https://stackoverflow.com/questions/23314787/use-of-vertex-array-objects-and-vertex-buffer-objects)
+[](https://learnopengl.com/img/getting-started/pipeline.png)
+
+2. [Use of Vertex Array Objects, Vertex Buffer Objects and Differences Between Them](https://stackoverflow.com/questions/23314787/use-of-vertex-array-objects-and-vertex-buffer-objects)
 
 
-2. **Stride**: The size of the vertex attributes' in bytes. It's necessary for OpenGL to know the offset when it wants to index vertex i.
+3. **Stride**: The size of the vertex attributes' in bytes. It's necessary for OpenGL to know the offset when it wants to index vertex i.
 
-3. ```
+4. ```
 	void glVertexAttribPointer(GLuint index,
 
 	GLint size,
@@ -43,29 +46,29 @@ Assimp might not work here because I built it with VS 2019 (check how to build a
         6. Pointer : Where does this attribute start inside the vertex (offset inside the vertex). !! you should cast the number      to (void*) !!
     - Third, don't forget to call `glEnableVertexAttribArray(i)` where i is the i'th attribute (in the index parameter).
     
-4. We should activate/**use the shader** **before** setting up the **uniforms' values** !
+5. We should activate/**use the shader** **before** setting up the **uniforms' values** !
 
-5. [How vertex and fragment shaders communicate in OpenGL? Since we have in a triangle (for example) three vertices and much more fragments, how does each fragment deal with the info it gets from each vertex differently?](https://stackoverflow.com/questions/28333019/how-vertex-and-fragment-shaders-communicate-in-opengl)
+6. [How vertex and fragment shaders communicate in OpenGL? Since we have in a triangle (for example) three vertices and much more fragments, how does each fragment deal with the info it gets from each vertex differently?](https://stackoverflow.com/questions/28333019/how-vertex-and-fragment-shaders-communicate-in-opengl)
 
-6. **Gouraud vs Phong models** :
+7. **Gouraud vs Phong models** :
 
     When the Phong lighting model is implemented in the vertex shader it is called Gouraud shading instead of Phong shading. Note that due to the interpolation the lighting looks a bit off. The Phong shading gives much smoother lighting results. 
 
-7. In view Space the viewer is always at position (0, 0, 0).
+8. In view Space the viewer is always at position (0, 0, 0).
 
-8. When you get the location of the uniform in the cpp, you get -1 if it did't find that uniform **or if it's declared in the shader but not used!**
+9. When you get the location of the uniform in the cpp, you get -1 if it did't find that uniform **or if it's declared in the shader but not used!**
 
-9. [glfwSwapInterval](https://www.glfw.org/docs/3.1/window.html#buffer_swap) : which makes the movement smoother because it enables [V-Sync](https://www.digitaltrends.com/computing/what-is-vsync/). For additional info check [this question](https://discourse.glfw.org/t/newbie-questions-trying-to-understand-glfwswapinterval/1287)
+10. [glfwSwapInterval](https://www.glfw.org/docs/3.1/window.html#buffer_swap) : which makes the movement smoother because it enables [V-Sync](https://www.digitaltrends.com/computing/what-is-vsync/). For additional info check [this question](https://discourse.glfw.org/t/newbie-questions-trying-to-understand-glfwswapinterval/1287)
 
-10. **Components of Phong shading:**
+11. **Components of Phong shading:**
 
 ![](https://imgur.com/z95AgKq.png)
 
-11. [Sampler2D](https://stackoverflow.com/questions/10868958/what-does-sampler2d-store) (which is used to store images for textures) in OpenGL is an [**Opaque Type**](https://stackoverflow.com/questions/2301454/what-defines-an-opaque-type-in-c-and-when-are-they-necessary-and-or-useful) which is why you can only use it as a uniform in the shaders.
+12. [Sampler2D](https://stackoverflow.com/questions/10868958/what-does-sampler2d-store) (which is used to store images for textures) in OpenGL is an [**Opaque Type**](https://stackoverflow.com/questions/2301454/what-defines-an-opaque-type-in-c-and-when-are-they-necessary-and-or-useful) which is why you can only use it as a uniform in the shaders.
 
-12. **Attenuation** : Reducing the intensity of light, over the distance a light ray travels.
+13. **Attenuation** : Reducing the intensity of light, over the distance a light ray travels.
 
-13. [How does glDrawArrays know what to draw?](https://stackoverflow.com/questions/19102180/how-does-gldrawarrays-know-what-to-draw)
+14. [How does glDrawArrays know what to draw?](https://stackoverflow.com/questions/19102180/how-does-gldrawarrays-know-what-to-draw)
 
 15. [Adding Assimp to VS (building from source to get .lib and .dll files)](https://www.youtube.com/watch?v=W_Ey_YPUjMk)
 
