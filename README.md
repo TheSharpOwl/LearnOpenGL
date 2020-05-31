@@ -13,7 +13,7 @@ Assimp might not work here because I built it with VS 2019 (check how to build a
 ## Important and Frequently Asked Questions for OpenGL
 1. **Graphics Pipline:**
 
-[](https://learnopengl.com/img/getting-started/pipeline.png)
+![](https://learnopengl.com/img/getting-started/pipeline.png)
 
 2. [Use of Vertex Array Objects, Vertex Buffer Objects and Differences Between Them](https://stackoverflow.com/questions/23314787/use-of-vertex-array-objects-and-vertex-buffer-objects)
 
