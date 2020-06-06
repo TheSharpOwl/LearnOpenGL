@@ -67,6 +67,8 @@ int main()
 	glEnable(GL_DEPTH_TEST);
 	glDepthFunc(GL_LESS);//if the depth is less take it and leave the rest
 
+	glEnable(GL_STENCIL_TEST);
+
 	//shaders
 	Shader shader("DepthVertex.glsl", "DepthFragment.glsl");
 
@@ -181,7 +183,7 @@ int main()
 		processInput(window);
 
 		glClearColor(0.1f, 0.1f, 0.1f, 1.0f);
-		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT | GL_STENCIL_BUFFER_BIT);
 
 		shader.Use();
 		glm::mat4 model = glm::mat4(1.0f);
