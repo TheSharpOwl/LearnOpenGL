@@ -67,6 +67,7 @@ int main()
 	glDepthFunc(GL_LESS);//if the depth is less take it and leave the rest
 
 	glEnable(GL_STENCIL_TEST);
+	glStencilFunc(GL_NOTEQUAL, 1, 0xFF);
 	glStencilOp(GL_KEEP, GL_KEEP, GL_REPLACE);
 
 	//shaders
@@ -175,7 +176,6 @@ int main()
 	shader.SetInt("texture1", 0);
 	//rendering loop
 	Shader shaderSingleColor("DepthVertex.glsl", "ShaderSingleColorFragment.glsl");
-	bool putBorder = false;
 
 	while (!glfwWindowShouldClose(window))
 	{
@@ -186,65 +186,67 @@ int main()
 		processInput(window);
 
 		glClearColor(0.1f, 0.1f, 0.1f, 1.0f);
+		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT | GL_STENCIL_BUFFER_BIT);
 
 		glm::mat4 model = glm::mat4(1.0f);
 		glm::mat4 view = camera.GetViewMatrix();
 		glm::mat4 projection = glm::perspective(glm::radians(camera.Zoom), (float)SCREEN_WIDTH / (float)SCREEN_HEIGHT, 0.1f, 100.0f);
 
-		//render the normal things
-		{
-			glEnable(GL_DEPTH_TEST);
-			glStencilOp(GL_KEEP, GL_KEEP, GL_REPLACE);
-			glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT | GL_STENCIL_BUFFER_BIT);
-			glStencilMask(0x00);// don;t enable for now to draw the floor
 
-			shader.Use();
-			shader.SetMat4("view", view);
-			shader.SetMat4("projection", projection);
-			//draw the floor
-			glBindVertexArray(planeVAO);
-			glActiveTexture(planeTexture);
-			glBindTexture(GL_TEXTURE_2D, planeTexture);
-			shader.SetMat4("model", glm::mat4(1.f));
-			glDrawArrays(GL_TRIANGLES, 0, 6);
+		shaderSingleColor.Use();
+		float scale = 1.1f;
+		shaderSingleColor.SetMat4("view", view);
+		shaderSingleColor.SetMat4("projection", projection);
+		// Set shaders values here except the model
+		shader.Use();
+		shader.SetMat4("view", view);
+		shader.SetMat4("projection", projection);
+
+		//draw the floor
+		glStencilMask(0x00);
+		glBindVertexArray(planeVAO);
+		glActiveTexture(planeTexture);
+		glBindTexture(GL_TEXTURE_2D, planeTexture);
+		shader.SetMat4("model", glm::mat4(1.0f));
+		glDrawArrays(GL_TRIANGLES, 0, 6);
+
+		glBindVertexArray(0);//reset the binding
+
+		//now the container's turn
+		glStencilFunc(GL_ALWAYS, 1, 0xFF);
+		glStencilMask(0xFF);
+		// cubes
+		glBindVertexArray(cubeVAO);
+		glActiveTexture(GL_TEXTURE0);
+		glBindTexture(GL_TEXTURE_2D, cubeTexture);
+		model = glm::translate(model, glm::vec3(-1.0f, 0.0f, -1.0f));
+		shader.SetMat4("model", model);
+		glDrawArrays(GL_TRIANGLES, 0, 36);
+	
 
 
-			glStencilFunc(GL_ALWAYS, 1, 0xFF);//0xFF is 1111111....
-			glStencilMask(0xFF);//now we wanna update the stencil buffer while drawing the cubes
 
-			//Draw the containers
-			glBindVertexArray(cubeVAO);
-			glActiveTexture(cubeTexture);
-			glBindTexture(GL_TEXTURE_2D, cubeTexture);
-			model = glm::translate(model, glm::vec3(-1.0f, 0.f, -1.f));
-			shader.SetMat4("model", glm::mat4(1.f));
-			glDrawArrays(GL_TRIANGLES, 0, 36);
-		}
+
+		// ----------------------------------------------------------------
 		// render the borders
-		{
-			glStencilFunc(GL_NOTEQUAL, 1, 0xFF);
-			glStencilMask(0x00);
-			glDisable(GL_DEPTH_TEST);
-			shaderSingleColor.Use();
-			// Draw the containers
-			glBindVertexArray(cubeVAO);
-			glActiveTexture(cubeTexture);
-			glBindTexture(GL_TEXTURE_2D, cubeTexture);
-			model = glm::translate(model, glm::vec3(-1.0f, 0.f, -1.f));
-			model = glm::scale(model, glm::vec3(0.01f, 0.01f, 0.01f));
-			shaderSingleColor.SetMat4("model", glm::mat4(1.f));
-			glDrawArrays(GL_TRIANGLES, 0, 36);
-			glStencilMask(0xFF);
-			glEnable(GL_DEPTH_TEST);
-		}
-
-		//reset the binding
-		glBindVertexArray(0);
-
 		glStencilFunc(GL_NOTEQUAL, 1, 0xFF);
-		glStencilMask(0x00);//disable writing to the stencil buffer
+		glStencilMask(0x00);
 		glDisable(GL_DEPTH_TEST);//Also disable depth testing so the scaled up containers e.g. the borders don't get overwritten by the floor
 		shaderSingleColor.Use();
+		glBindVertexArray(cubeVAO);
+		//already active texture
+		glBindTexture(GL_TEXTURE_2D, cubeTexture);
+		model = glm::mat4(1.0f);
+		model = glm::translate(model, glm::vec3(-1.0f, 0.0f, -1.0f));
+		model = glm::scale(model, glm::vec3(scale, scale, scale));
+		shaderSingleColor.SetMat4("model", model);
+		glDrawArrays(GL_TRIANGLES, 0, 36);
+
+		glBindVertexArray(0);
+		glStencilMask(0xFF);
+		glStencilFunc(GL_ALWAYS, 0, 0xFF);
+		glEnable(GL_DEPTH_TEST);
+		
 
 		glfwSwapBuffers(window);
 		glfwPollEvents();
