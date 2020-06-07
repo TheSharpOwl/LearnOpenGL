@@ -158,6 +158,7 @@
     <None Include="LampVertex.glsl" />
     <None Include="ModelFragment.glsl" />
     <None Include="ModelVertex.glsl" />
+    <None Include="ShaderSingleColorFragment.glsl" />
     <None Include="VertexShader.glsl" />
   </ItemGroup>
   <ItemGroup>
