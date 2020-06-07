@@ -48,8 +48,7 @@ float lastFrame = 0.f;
 int main()
 {
 	//initialize GLFW, do the window settings
-	{
-		glfwInit();
+	glfwInit();
 	glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 3);
 	glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 3);
 	glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
@@ -63,7 +62,6 @@ int main()
 	}
 
 	setupWindowSettings(window);
-	}
 	//Depth test settings
 	glEnable(GL_DEPTH_TEST);
 	glDepthFunc(GL_LESS);//if the depth is less take it and leave the rest
@@ -130,53 +128,51 @@ int main()
 	};
 
 	//VAO, VBO,...etc
-	{
-		//cube VAO
-		unsigned int cubeVAO, cubeVBO;
+	//cube VAO
+	unsigned int cubeVAO, cubeVBO;
 
-		glGenVertexArrays(1, &cubeVAO);
-		glGenBuffers(1, &cubeVBO);
+	glGenVertexArrays(1, &cubeVAO);
+	glGenBuffers(1, &cubeVBO);
 
-		glBindVertexArray(cubeVAO);
-		glBindBuffer(GL_ARRAY_BUFFER, cubeVBO);
+	glBindVertexArray(cubeVAO);
+	glBindBuffer(GL_ARRAY_BUFFER, cubeVBO);
 
-		glBufferData(GL_ARRAY_BUFFER, sizeof(cubeVertices), &cubeVertices, GL_STATIC_DRAW);
+	glBufferData(GL_ARRAY_BUFFER, sizeof(cubeVertices), &cubeVertices, GL_STATIC_DRAW);
 
-		glEnableVertexAttribArray(0);
-		glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 5 * sizeof(float), (void*)0);
+	glEnableVertexAttribArray(0);
+	glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 5 * sizeof(float), (void*)0);
 
-		glEnableVertexAttribArray(1);
-		glVertexAttribPointer(1, 2, GL_FLOAT, GL_FALSE, 5 * sizeof(float), (void*)(3 * sizeof(float)));
+	glEnableVertexAttribArray(1);
+	glVertexAttribPointer(1, 2, GL_FLOAT, GL_FALSE, 5 * sizeof(float), (void*)(3 * sizeof(float)));
 
-		glBindVertexArray(0);//unbind the Vertex Array
-
-
-		unsigned int planeVAO, planeVBO;
-		glGenVertexArrays(1, &planeVAO);
-		glGenBuffers(1, &planeVBO);
-
-		glBindVertexArray(planeVAO);
-		glBindBuffer(GL_ARRAY_BUFFER, planeVBO);
-
-		glBufferData(GL_ARRAY_BUFFER, sizeof(planeVertices), &planeVertices, GL_STATIC_DRAW);
-
-		glEnableVertexAttribArray(0);
-		glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 5 * sizeof(float), (void*)0);
-
-		glEnableVertexAttribArray(1);
-		glVertexAttribPointer(1, 2, GL_FLOAT, GL_FLOAT, 5 * sizeof(float), (void*)(3 * sizeof(float)));
-
-		glBindVertexArray(0);
+	glBindVertexArray(0);//unbind the Vertex Array
 
 
-		//load the textures
-		unsigned int cubeTexture = loadTexture("resources/textures/marble.jpg");
-		unsigned int planeTexture = loadTexture("resources/textures/metal.png");
+	unsigned int planeVAO, planeVBO;
+	glGenVertexArrays(1, &planeVAO);
+	glGenBuffers(1, &planeVBO);
 
-		//shader configuration 
-		shader.Use();
-		shader.SetInt("texture1", 0);
-	}
+	glBindVertexArray(planeVAO);
+	glBindBuffer(GL_ARRAY_BUFFER, planeVBO);
+
+	glBufferData(GL_ARRAY_BUFFER, sizeof(planeVertices), &planeVertices, GL_STATIC_DRAW);
+
+	glEnableVertexAttribArray(0);
+	glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 5 * sizeof(float), (void*)0);
+
+	glEnableVertexAttribArray(1);
+	glVertexAttribPointer(1, 2, GL_FLOAT, GL_FLOAT, 5 * sizeof(float), (void*)(3 * sizeof(float)));
+
+	glBindVertexArray(0);
+
+
+	//load the textures
+	unsigned int cubeTexture = loadTexture("resources/textures/marble.jpg");
+	unsigned int planeTexture = loadTexture("resources/textures/metal.png");
+
+	//shader configuration 
+	shader.Use();
+	shader.SetInt("texture1", 0);
 	//rendering loop
 	Shader shaderSingleColor("DepthVertex.glsl", "ShaderSingleColorFragment.glsl");
 	bool putBorder = false;
@@ -195,7 +191,7 @@ int main()
 		glm::mat4 view = camera.GetViewMatrix();
 		glm::mat4 projection = glm::perspective(glm::radians(camera.Zoom), (float)SCREEN_WIDTH / (float)SCREEN_HEIGHT, 0.1f, 100.0f);
 
-		if (!putBorder)
+		//render the normal things
 		{
 			glEnable(GL_DEPTH_TEST);
 			glStencilOp(GL_KEEP, GL_KEEP, GL_REPLACE);
@@ -224,13 +220,23 @@ int main()
 			shader.SetMat4("model", glm::mat4(1.f));
 			glDrawArrays(GL_TRIANGLES, 0, 36);
 		}
-		else // render the borders
+		// render the borders
 		{
-			
+			glStencilFunc(GL_NOTEQUAL, 1, 0xFF);
+			glStencilMask(0x00);
+			glDisable(GL_DEPTH_TEST);
+			shaderSingleColor.Use();
+			// Draw the containers
+			glBindVertexArray(cubeVAO);
+			glActiveTexture(cubeTexture);
+			glBindTexture(GL_TEXTURE_2D, cubeTexture);
+			model = glm::translate(model, glm::vec3(-1.0f, 0.f, -1.f));
+			model = glm::scale(model, glm::vec3(0.01f, 0.01f, 0.01f));
+			shaderSingleColor.SetMat4("model", glm::mat4(1.f));
+			glDrawArrays(GL_TRIANGLES, 0, 36);
+			glStencilMask(0xFF);
+			glEnable(GL_DEPTH_TEST);
 		}
-
-		//reverse 
-		putBorder = !putBorder;
 
 		//reset the binding
 		glBindVertexArray(0);
