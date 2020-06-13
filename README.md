@@ -80,6 +80,10 @@ Assimp might not work here because I built it with VS 2019 (check how to build a
 
 ![Z-fighting example between the floor and the box base part](https://imgur.com/oYAkgTU.png)
 
+19. To make blending work for multiple objects we have to draw the farthest object first and the closest object as last because    depth test doesn't work well with blending.
+
+![](https://learnopengl.com/img/advanced/blending_incorrect_order.png)
+
 ## Issues I had :
 
 1. Importing Assimp was not compiling at first then I got linking errors (At the end I got .dll not found then solved also)

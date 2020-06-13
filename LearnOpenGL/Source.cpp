@@ -10,6 +10,7 @@
 #include<fstream>
 #include<sstream>
 #include<vector>
+#include<map>
 #include<math.h>
 
 #include "Shader.h"
@@ -65,6 +66,10 @@ int main()
 	//Depth test settings
 	glEnable(GL_DEPTH_TEST);
 	glDepthFunc(GL_LESS);//if the depth is less take it and leave the rest
+
+	// Enable blending
+	glEnable(GL_BLEND);
+	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 
 
 	//shaders
@@ -185,7 +190,7 @@ int main()
 		1.0f,  0.5f,  0.0f,  1.0f,  0.0f
 	};
 
-	std::vector<glm::vec3> vegetation
+	std::vector<glm::vec3> windows
 	{
 		glm::vec3(-1.5f, 0.0f, -0.48f),
 		glm::vec3(1.5f, 0.0f, -0.51f),
@@ -194,7 +199,7 @@ int main()
 		glm::vec3(-0.5f, 0.0f, -0.6f)
 	};
 
-	unsigned int grassTexture = loadTexture("resources/textures/grass.png");
+	unsigned int windowsTexture = loadTexture("resources/textures/blending_transparent_window.png");
 	unsigned int transparentVAO, transparentVBO;
 	glGenVertexArrays(1, &transparentVAO);
 	glGenBuffers(1, &transparentVBO);
@@ -253,13 +258,19 @@ int main()
 		shader.SetMat4("model", model);
 		glDrawArrays(GL_TRIANGLES, 0, 36);
 
-		// Draw grass
+		// Draw windows in order after adding ditances to the map
+		std::map<float, glm::vec3> sorted;
+		for (unsigned int i = 0; i < windows.size(); i++)
+		{
+			float distance = glm::length(camera.Position - windows[i]);
+			sorted[distance] = windows[i];
+		}
 		glBindVertexArray(transparentVAO);
-		glBindTexture(GL_TEXTURE_2D, grassTexture);
-		for (unsigned int i = 0; i < vegetation.size(); i++)
+		glBindTexture(GL_TEXTURE_2D, windowsTexture);
+		for (auto it = sorted.rbegin(); it != sorted.rend(); it++)
 		{
 			model = glm::mat4();
-			model = glm::translate(model, vegetation[i]);
+			model = glm::translate(model, it->second);
 			shader.SetMat4("model", model);
 			glDrawArrays(GL_TRIANGLES, 0, 6);
 		}
