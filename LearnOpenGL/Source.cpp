@@ -9,7 +9,7 @@
 #include<string>
 #include<fstream>
 #include<sstream>
-#include<iostream>
+#include<vector>
 #include<math.h>
 
 #include "Shader.h"
@@ -171,8 +171,43 @@ int main()
 	//shader configuration 
 	shader.Use();
 	shader.SetInt("texture1", 0);
-	//rendering loop
-	bool putBorder = false;
+
+
+	// Using the grass texture 
+	float transparentVertices[] = {
+		// positions         // texture Coords (swapped y coordinates because texture is flipped upside down)
+		0.0f,  0.5f,  0.0f,  0.0f,  0.0f,
+		0.0f, -0.5f,  0.0f,  0.0f,  1.0f,
+		1.0f, -0.5f,  0.0f,  1.0f,  1.0f,
+
+		0.0f,  0.5f,  0.0f,  0.0f,  0.0f,
+		1.0f, -0.5f,  0.0f,  1.0f,  1.0f,
+		1.0f,  0.5f,  0.0f,  1.0f,  0.0f
+	};
+
+	std::vector<glm::vec3> vegetation
+	{
+		glm::vec3(-1.5f, 0.0f, -0.48f),
+		glm::vec3(1.5f, 0.0f, -0.51f),
+		glm::vec3(0.0f, 0.0f, -0.7f),
+		glm::vec3(-0.3f, 0.0f, -2.3f),
+		glm::vec3(-0.5f, 0.0f, -0.6f)
+	};
+
+	unsigned int grassTexture = loadTexture("resources/textures/grass.png");
+	unsigned int transparentVAO, transparentVBO;
+	glGenVertexArrays(1, &transparentVAO);
+	glGenBuffers(1, &transparentVBO);
+	glBindVertexArray(transparentVAO);
+	glBindBuffer(GL_ARRAY_BUFFER, transparentVBO);
+	glBufferData(GL_ARRAY_BUFFER, sizeof(transparentVertices), &transparentVertices, GL_STATIC_DRAW);
+	glEnableVertexAttribArray(0);
+	glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 5 * sizeof(float), (void*) 0);
+	glEnableVertexAttribArray(1);
+	glVertexAttribPointer(1, 2, GL_FLOAT, GL_FALSE, 5 * sizeof(float), (void*) (3 * sizeof(float)));
+
+	glBindVertexArray(0);
+
 
 	while (!glfwWindowShouldClose(window))
 	{
@@ -213,6 +248,21 @@ int main()
 		glBindTexture(GL_TEXTURE_2D, cubeTexture);
 
 		glDrawArrays(GL_TRIANGLES, 0, 36);
+
+		model = glm::translate(model, glm::vec3(2.f, 0.f, 0.f));
+		shader.SetMat4("model", model);
+		glDrawArrays(GL_TRIANGLES, 0, 36);
+
+		// Draw grass
+		glBindVertexArray(transparentVAO);
+		glBindTexture(GL_TEXTURE_2D, grassTexture);
+		for (unsigned int i = 0; i < vegetation.size(); i++)
+		{
+			model = glm::mat4();
+			model = glm::translate(model, vegetation[i]);
+			shader.SetMat4("model", model);
+			glDrawArrays(GL_TRIANGLES, 0, 6);
+		}
 
 		glfwSwapBuffers(window);
 		glfwPollEvents();
