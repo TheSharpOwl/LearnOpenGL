@@ -66,10 +66,6 @@ int main()
 	glEnable(GL_DEPTH_TEST);
 	glDepthFunc(GL_LESS);//if the depth is less take it and leave the rest
 
-	glEnable(GL_STENCIL_TEST);
-	glStencilFunc(GL_NOTEQUAL, 1, 0xFF);
-	glStencilOp(GL_KEEP, GL_KEEP, GL_REPLACE);
-
 
 	//shaders
 	Shader shader("DepthVertex.glsl", "DepthFragment.glsl");
@@ -172,7 +168,6 @@ int main()
 	unsigned int cubeTexture = loadTexture("resources/textures/marble.jpg");
 	unsigned int planeTexture = loadTexture("resources/textures/metal.png");
 
-	Shader shaderSingleColor("DepthVertex.glsl", "ShaderSingleColorFragment.glsl");
 	//shader configuration 
 	shader.Use();
 	shader.SetInt("texture1", 0);
@@ -188,7 +183,7 @@ int main()
 		processInput(window);
 
 		glClearColor(0.1f, 0.1f, 0.1f, 1.0f);
-		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT | GL_STENCIL_BUFFER_BIT);
+		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
 		glm::mat4 model = glm::mat4(1.0f);
 		glm::mat4 view = camera.GetViewMatrix();
@@ -200,7 +195,6 @@ int main()
 		shader.SetMat4("projection", projection);
 		shader.SetMat4("model", glm::mat4(1.f));
 		glEnable(GL_DEPTH_TEST);
-		glStencilMask(0x00);// don;t enable for now to draw the floor
 
 		//draw the floor
 		glBindVertexArray(planeVAO);
@@ -211,10 +205,6 @@ int main()
 		//reset
 		glBindVertexArray(0);
 
-		// --------------------------------------------------
-		//cube render round 1
-		glStencilFunc(GL_ALWAYS, 1, 0xFF);//0xFF is 1111111....
-		glStencilMask(0xFF);//now we wanna update the stencil buffer while drawing the cubes
 		shader.Use();
 		shader.SetMat4("model", glm::mat4(1.f));
 		//Draw the containers
@@ -223,29 +213,6 @@ int main()
 		glBindTexture(GL_TEXTURE_2D, cubeTexture);
 
 		glDrawArrays(GL_TRIANGLES, 0, 36);
-
-		// ----------------------------------------
-		// Round 2 borders
-
-		glStencilFunc(GL_NOTEQUAL, 1, 0xFF);
-		glStencilMask(0x00);
-		glDisable(GL_DEPTH_TEST);
-		glBindVertexArray(cubeVAO);
-		//already active texture
-		glBindTexture(GL_TEXTURE_2D, cubeTexture);
-		shaderSingleColor.Use();
-		model = glm::mat4(1.0f);
-		model = glm::scale(model, glm::vec3(1.3f, 1.3f, 1.3f));
-		shaderSingleColor.SetMat4("model", model);
-		shaderSingleColor.SetMat4("view", view);
-		shaderSingleColor.SetMat4("projection", projection);
-		glDrawArrays(GL_TRIANGLES, 0, 36);
-
-		//reset the binding
-		glBindVertexArray(0);
-		glStencilMask(0xFF);
-		glStencilFunc(GL_ALWAYS, 0, 0xFF);
-		glEnable(GL_DEPTH_TEST);//Also disable depth testing so the scaled up containers e.g. the borders don't get overwritten by the floor
 
 		glfwSwapBuffers(window);
 		glfwPollEvents();
