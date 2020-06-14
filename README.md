@@ -84,6 +84,15 @@ Assimp might not work here because I built it with VS 2019 (check how to build a
 
 ![](https://learnopengl.com/img/advanced/blending_incorrect_order.png)
 
+20. ```glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, texture,0);```
+The glFrameBufferTexture2D has the following parameters:
+
+ - target: the framebuffer type we’re targeting (draw, read or both).
+ - attachment:  the type of attachment we’re going to attach.  Right now we’re attaching a colorattachment. Note that the 0 at the end suggests we can attach more than 1 color attachment. We’ll get to that in a later tutorial.
+ - textarget: the type of the texture you want to attach.
+ - texture: the actual texture to attach.
+ - level: the mipmap level. We keep this at 0.
+
 ## Issues I had :
 
 1. Importing Assimp was not compiling at first then I got linking errors (At the end I got .dll not found then solved also)
