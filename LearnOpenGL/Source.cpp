@@ -67,9 +67,12 @@ int main()
 	glEnable(GL_DEPTH_TEST);
 	glDepthFunc(GL_LESS);//if the depth is less take it and leave the rest
 
-	// Enable blending
-	glEnable(GL_BLEND);
-	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+	//Enable face culling
+	glEnable(GL_CULL_FACE);
+	//Discard the front faces this time (initially it is GL_BACK)
+	glCullFace(GL_FRONT);
+	glFrontFace(GL_CW);
+
 
 
 	//shaders
