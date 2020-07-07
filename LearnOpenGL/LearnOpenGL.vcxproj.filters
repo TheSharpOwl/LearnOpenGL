@@ -54,9 +54,6 @@
       <Filter>Shaders</Filter>
     </None>
     <None Include="..\README.md" />
-    <None Include="VertexShader.glsl">
-      <Filter>Source Files</Filter>
-    </None>
     <None Include="ModelFragment.glsl">
       <Filter>Shaders</Filter>
     </None>
@@ -70,6 +67,13 @@
       <Filter>Shaders</Filter>
     </None>
     <None Include="ShaderSingleColorFragment.glsl">
+      <Filter>Shaders</Filter>
+    </None>
+    <None Include="FramebufferVertex.glsl">
+      <Filter>Shaders</Filter>
+    </None>
+    <None Include="FramebufferFragment.glsl" />
+    <None Include="VertexShader.glsl">
       <Filter>Shaders</Filter>
     </None>
   </ItemGroup>

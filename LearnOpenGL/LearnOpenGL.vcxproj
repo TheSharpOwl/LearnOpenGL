@@ -154,6 +154,8 @@
     <None Include="DepthFragment.glsl" />
     <None Include="DepthVertex.glsl" />
     <None Include="FragmentShader.glsl" />
+    <None Include="FramebufferFragment.glsl" />
+    <None Include="FramebufferVertex.glsl" />
     <None Include="LampFragment.glsl" />
     <None Include="LampVertex.glsl" />
     <None Include="ModelFragment.glsl" />
