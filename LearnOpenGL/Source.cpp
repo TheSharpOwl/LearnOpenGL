@@ -252,7 +252,7 @@ int main()
 		glBindFramebuffer(GL_FRAMEBUFFER, 0);
 		glDisable(GL_DEPTH_TEST);
 		//clear all the relevant buffers
-		glClearColor(1.f, 1.f, 1.f, 1.f);
+		glClearColor(1.0f, 1.0f, 1.0f, 1.0f);
 		glClear(GL_COLOR_BUFFER_BIT);
 
 		framebufferShader.Use();
