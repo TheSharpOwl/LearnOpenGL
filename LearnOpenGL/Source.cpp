@@ -306,6 +306,7 @@ int main()
 	glDeleteBuffers(1, &cubeVBO);
 	glDeleteBuffers(1, &planeVBO);
 	glDeleteBuffers(1, &quadVBO);
+
 	glfwTerminate();
 	return 0;
 }
