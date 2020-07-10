@@ -72,8 +72,10 @@
     <None Include="FramebufferVertex.glsl">
       <Filter>Shaders</Filter>
     </None>
-    <None Include="FramebufferFragment.glsl" />
     <None Include="VertexShader.glsl">
+      <Filter>Shaders</Filter>
+    </None>
+    <None Include="FramebufferFragment.glsl">
       <Filter>Shaders</Filter>
     </None>
   </ItemGroup>
