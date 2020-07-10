@@ -41,41 +41,14 @@
     <None Include="FragmentShader.glsl">
       <Filter>Shaders</Filter>
     </None>
-    <None Include="ColorsVertex.glsl">
-      <Filter>Shaders</Filter>
-    </None>
-    <None Include="ColorsFragment.glsl">
-      <Filter>Shaders</Filter>
-    </None>
-    <None Include="LampVertex.glsl">
-      <Filter>Shaders</Filter>
-    </None>
-    <None Include="LampFragment.glsl">
-      <Filter>Shaders</Filter>
-    </None>
     <None Include="..\README.md" />
-    <None Include="ModelFragment.glsl">
-      <Filter>Shaders</Filter>
-    </None>
-    <None Include="ModelVertex.glsl">
-      <Filter>Shaders</Filter>
-    </None>
-    <None Include="DepthVertex.glsl">
-      <Filter>Shaders</Filter>
-    </None>
-    <None Include="DepthFragment.glsl">
-      <Filter>Shaders</Filter>
-    </None>
-    <None Include="ShaderSingleColorFragment.glsl">
-      <Filter>Shaders</Filter>
-    </None>
-    <None Include="FramebufferVertex.glsl">
-      <Filter>Shaders</Filter>
-    </None>
     <None Include="VertexShader.glsl">
       <Filter>Shaders</Filter>
     </None>
-    <None Include="FramebufferFragment.glsl">
+    <None Include="SkyboxVertex.glsl">
+      <Filter>Shaders</Filter>
+    </None>
+    <None Include="SkyboxFragment.glsl">
       <Filter>Shaders</Filter>
     </None>
   </ItemGroup>
