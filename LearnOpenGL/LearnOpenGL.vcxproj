@@ -149,10 +149,14 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="..\README.md" />
+    <None Include="BlueFragment.glsl" />
     <None Include="FragmentShader.glsl" />
+    <None Include="GreenFragment.glsl" />
+    <None Include="RedFragment.glsl" />
     <None Include="SkyboxFragment.glsl" />
     <None Include="SkyboxVertex.glsl" />
     <None Include="VertexShader.glsl" />
+    <None Include="YellowFragment.glsl" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Camera.h" />
