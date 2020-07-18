@@ -149,6 +149,8 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="..\README.md" />
+    <None Include="DefaultFragment.glsl" />
+    <None Include="DefaultVertex.glsl" />
     <None Include="FragmentShader.glsl" />
     <None Include="GeometryShader.glsl" />
     <None Include="VertexShader.glsl" />

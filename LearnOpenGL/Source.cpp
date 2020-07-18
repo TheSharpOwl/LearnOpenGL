@@ -66,7 +66,8 @@ int main()
 
 	glEnable(GL_DEPTH_TEST);
 
-	Shader shader("VertexShader.glsl", "GeometryShader.glsl", "FragmentShader.glsl");
+	Shader shader("DefaultVertex.glsl", "DefaultFragment.glsl");
+	Shader normalShader("VertexShader.glsl", "GeometryShader.glsl", "FragmentShader.glsl");
 	Model nanoSuit("nanosuit/nanosuit.obj");
 
 
@@ -82,17 +83,23 @@ int main()
 		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
 		glm::mat4 projection = glm::perspective(glm::radians(45.0f), (float)SCREEN_WIDTH / (float)SCREEN_HEIGHT, 1.0f, 100.0f);
-		glm::mat4 view = camera.GetViewMatrix();;
+		glm::mat4 view = camera.GetViewMatrix();
 		glm::mat4 model = glm::mat4(1.0f);
 
 		shader.Use();
 		shader.SetMat4("projection", projection);
 		shader.SetMat4("view", view);
 		shader.SetMat4("model", model);
-		shader.SetFloat("time", glfwGetTime());
 		
 		// draw model
 		nanoSuit.Draw(shader);
+
+		normalShader.Use();
+		normalShader.SetMat4("projection", projection);
+		normalShader.SetMat4("view", view);
+		normalShader.SetMat4("model", model);
+
+		nanoSuit.Draw(normalShader);
 
 		glfwSwapBuffers(window);
 		glfwPollEvents();
