@@ -34,8 +34,8 @@ unsigned int loadCubemap(const std::vector<std::string> &faces);
 
 
 //settings
-const unsigned int SCREEN_WIDTH = 500;
-const unsigned int SCREEN_HEIGHT = 500;
+const unsigned int SCREEN_WIDTH = 1920;
+const unsigned int SCREEN_HEIGHT = 1080;
 
 //camera
 Camera camera(glm::vec3(0.f, 0.f, 3.f));
@@ -67,26 +67,8 @@ int main()
 	glEnable(GL_DEPTH_TEST);
 
 	Shader shader("VertexShader.glsl", "GeometryShader.glsl", "FragmentShader.glsl");
+	Model nanoSuit("nanosuit/nanosuit.obj");
 
-	float points[] = {
-		// coordinates,    colors
-	   -0.5f,  0.5f, 1.0f, 0.0f, 0.0f, // top-left
-		0.5f,  0.5f, 0.0f, 1.0f, 0.0f, // top-right
-		0.5f, -0.5f, 0.0f, 0.0f, 1.0f, // bottom-right
-	   -0.5f, -0.5f, 1.0f, 1.0f, 0.0f  // bottom-left
-	};
-
-	unsigned int VBO, VAO;
-	glGenBuffers(1, &VBO);
-	glGenVertexArrays(1, &VAO);
-	glBindVertexArray(VAO);
-	glBindBuffer(GL_ARRAY_BUFFER, VBO);
-	glBufferData(GL_ARRAY_BUFFER, sizeof(points), &points, GL_STATIC_DRAW);
-	glEnableVertexAttribArray(0);
-	glVertexAttribPointer(0, 2, GL_FLOAT, GL_FALSE, 5 * sizeof(float), 0);
-	glEnableVertexAttribArray(1);
-	glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, 5 * sizeof(float), (void*)(2 * sizeof(float)));
-	glBindVertexArray(0);
 
 	while (!glfwWindowShouldClose(window))
 	{
@@ -99,16 +81,23 @@ int main()
 		glClearColor(0.1f, 0.1f, 0.1f, 1.0f);
 		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
+		glm::mat4 projection = glm::perspective(glm::radians(45.0f), (float)SCREEN_WIDTH / (float)SCREEN_HEIGHT, 1.0f, 100.0f);
+		glm::mat4 view = camera.GetViewMatrix();;
+		glm::mat4 model = glm::mat4(1.0f);
+
 		shader.Use();
-		glBindVertexArray(VAO);
-		glDrawArrays(GL_POINTS, 0, 4);
-	
+		shader.SetMat4("projection", projection);
+		shader.SetMat4("view", view);
+		shader.SetMat4("model", model);
+		shader.SetFloat("time", glfwGetTime());
+		
+		// draw model
+		nanoSuit.Draw(shader);
+
 		glfwSwapBuffers(window);
 		glfwPollEvents();
 
 	}
-	glDeleteVertexArrays(1, &VAO);
-	glDeleteBuffers(1, &VBO);
 
 	glfwTerminate();
 	return 0;
