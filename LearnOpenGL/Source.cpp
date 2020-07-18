@@ -62,90 +62,31 @@ int main()
 		glfwTerminate();
 		return -1;
 	}
-
 	setupWindowSettings(window);
 
-	Shader redShader("VertexShader.glsl", "RedFragment.glsl");
-	Shader greenShader("VertexShader.glsl", "GreenFragment.glsl");
-	Shader blueShader("VertexShader.glsl", "BlueFragment.glsl");
-	Shader yellowShader("VertexShader.glsl", "YellowFragment.glsl");
+	glEnable(GL_DEPTH_TEST);
 
-	float cubeVertices[] = {
-		// positions         
-		-0.5f, -0.5f, -0.5f,
-		 0.5f, -0.5f, -0.5f,
-		 0.5f,  0.5f, -0.5f,
-		 0.5f,  0.5f, -0.5f,
-		-0.5f,  0.5f, -0.5f,
-		-0.5f, -0.5f, -0.5f,
+	Shader shader("VertexShader.glsl", "GeometryShader.glsl", "FragmentShader.glsl");
 
-		-0.5f, -0.5f,  0.5f,
-		 0.5f, -0.5f,  0.5f,
-		 0.5f,  0.5f,  0.5f,
-		 0.5f,  0.5f,  0.5f,
-		-0.5f,  0.5f,  0.5f,
-		-0.5f, -0.5f,  0.5f,
-
-		-0.5f,  0.5f,  0.5f,
-		-0.5f,  0.5f, -0.5f,
-		-0.5f, -0.5f, -0.5f,
-		-0.5f, -0.5f, -0.5f,
-		-0.5f, -0.5f,  0.5f,
-		-0.5f,  0.5f,  0.5f,
-
-		 0.5f,  0.5f,  0.5f,
-		 0.5f,  0.5f, -0.5f,
-		 0.5f, -0.5f, -0.5f,
-		 0.5f, -0.5f, -0.5f,
-		 0.5f, -0.5f,  0.5f,
-		 0.5f,  0.5f,  0.5f,
-
-		-0.5f, -0.5f, -0.5f,
-		 0.5f, -0.5f, -0.5f,
-		 0.5f, -0.5f,  0.5f,
-		 0.5f, -0.5f,  0.5f,
-		-0.5f, -0.5f,  0.5f,
-		-0.5f, -0.5f, -0.5f,
-
-		-0.5f,  0.5f, -0.5f,
-		 0.5f,  0.5f, -0.5f,
-		 0.5f,  0.5f,  0.5f,
-		 0.5f,  0.5f,  0.5f,
-		-0.5f,  0.5f,  0.5f,
-		-0.5f,  0.5f, -0.5f,
+	float points[] = {
+		// coordinates,    colors
+	   -0.5f,  0.5f, 1.0f, 0.0f, 0.0f, // top-left
+		0.5f,  0.5f, 0.0f, 1.0f, 0.0f, // top-right
+		0.5f, -0.5f, 0.0f, 0.0f, 1.0f, // bottom-right
+	   -0.5f, -0.5f, 1.0f, 1.0f, 0.0f  // bottom-left
 	};
 
-	unsigned cubeVAO, cubeVBO;
-	glGenVertexArrays(1, &cubeVAO);
-	glGenBuffers(1, &cubeVBO);
-	glBindVertexArray(cubeVAO);
-	glBindBuffer(GL_ARRAY_BUFFER, cubeVBO);
-	glBufferData(GL_ARRAY_BUFFER, sizeof(cubeVertices), &cubeVertices, GL_STATIC_DRAW);
+	unsigned int VBO, VAO;
+	glGenBuffers(1, &VBO);
+	glGenVertexArrays(1, &VAO);
+	glBindVertexArray(VAO);
+	glBindBuffer(GL_ARRAY_BUFFER, VBO);
+	glBufferData(GL_ARRAY_BUFFER, sizeof(points), &points, GL_STATIC_DRAW);
 	glEnableVertexAttribArray(0);
-	glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 3 * sizeof(float), (void*)0);
-
-	unsigned int redUniformBlockIndex = glGetUniformBlockIndex(redShader.ID, "Matrices");
-	unsigned int greenUniformBlockIndex = glGetUniformBlockIndex(greenShader.ID, "Matrices");
-	unsigned int blueUniformBlockIndex = glGetUniformBlockIndex(blueShader.ID, "Matrices");
-	unsigned int yellowUniformBlockIndex = glGetUniformBlockIndex(yellowShader.ID, "Matrices");
-
-	glUniformBlockBinding(redShader.ID, redUniformBlockIndex, 0);
-	glUniformBlockBinding(greenShader.ID, greenUniformBlockIndex, 0);
-	glUniformBlockBinding(blueShader.ID, blueUniformBlockIndex, 0);
-	glUniformBlockBinding(yellowShader.ID, yellowUniformBlockIndex, 0);
-
-	// now we actually create the buffer
-	unsigned int uboMetrices;
-	glGenBuffers(1, &uboMetrices);
-	glBindBuffer(GL_UNIFORM_BUFFER, uboMetrices);
-	glBufferData(GL_UNIFORM_BUFFER, 2 * sizeof(glm::mat4), NULL, GL_STATIC_DRAW);
-	glBindBufferRange(GL_UNIFORM_BUFFER, 0, uboMetrices, 0, 2 * sizeof(glm::mat4));
-	//let's store the projection matrix
-	glm::mat4 projection = glm::perspective(glm::radians(camera.Zoom), (float)SCREEN_WIDTH / (float)SCREEN_HEIGHT, 0.1f, 100.0f);
-	glBindBuffer(GL_UNIFORM_BUFFER, uboMetrices);
-	// I think value_ptr is for glm::mat4 because it is stored in some different way
-
-	glBufferSubData(GL_UNIFORM_BUFFER, 0, sizeof(glm::mat4), glm::value_ptr(projection));
+	glVertexAttribPointer(0, 2, GL_FLOAT, GL_FALSE, 5 * sizeof(float), 0);
+	glEnableVertexAttribArray(1);
+	glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, 5 * sizeof(float), (void*)(2 * sizeof(float)));
+	glBindVertexArray(0);
 
 	while (!glfwWindowShouldClose(window))
 	{
@@ -157,43 +98,18 @@ int main()
 
 		glClearColor(0.1f, 0.1f, 0.1f, 1.0f);
 		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-		glEnable(GL_DEPTH_TEST);
 
-		glm::mat4 model = glm::mat4(1.f);
-		glm::mat4 view = camera.GetViewMatrix();
-		glBindBuffer(GL_UNIFORM_BUFFER, uboMetrices);
-		glBufferSubData(GL_UNIFORM_BUFFER, sizeof(glm::mat4), sizeof(glm::mat4), glm::value_ptr(view));
-		glBindBuffer(GL_UNIFORM_BUFFER, 0);
-
-		// draw 4 cubes
-		glBindVertexArray(cubeVAO);
-		redShader.Use();
-		model = glm::translate(model, glm::vec3(-0.5f, 1.f, 0.0f));
-		redShader.SetMat4("model", model);
-		glDrawArrays(GL_TRIANGLES, 0, 36);
-
-		greenShader.Use();
-		model = glm::translate(model, glm::vec3(1.f, 0.f, 0.0f));
-		greenShader.SetMat4("model", model);
-		glDrawArrays(GL_TRIANGLES, 0, 36);
-
-		blueShader.Use();
-		model = glm::translate(model, glm::vec3(0.f, -1.f, 0.0f)); 
-		blueShader.SetMat4("model", model);
-		glDrawArrays(GL_TRIANGLES, 0, 36);
-
-		yellowShader.Use();
-		model = glm::translate(model, glm::vec3(-1.f, 0.f, 0.0f));
-		yellowShader.SetMat4("model", model);
-		glDrawArrays(GL_TRIANGLES, 0, 36);
-
-
+		shader.Use();
+		glBindVertexArray(VAO);
+		glDrawArrays(GL_POINTS, 0, 4);
+	
 		glfwSwapBuffers(window);
 		glfwPollEvents();
 
 	}
-	glDeleteVertexArrays(1, &cubeVAO);
-	glDeleteBuffers(1, &cubeVBO);
+	glDeleteVertexArrays(1, &VAO);
+	glDeleteBuffers(1, &VBO);
+
 	glfwTerminate();
 	return 0;
 }

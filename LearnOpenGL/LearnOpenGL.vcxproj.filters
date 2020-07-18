@@ -45,22 +45,7 @@
     <None Include="VertexShader.glsl">
       <Filter>Shaders</Filter>
     </None>
-    <None Include="SkyboxVertex.glsl">
-      <Filter>Shaders</Filter>
-    </None>
-    <None Include="SkyboxFragment.glsl">
-      <Filter>Shaders</Filter>
-    </None>
-    <None Include="YellowFragment.glsl">
-      <Filter>Shaders</Filter>
-    </None>
-    <None Include="RedFragment.glsl">
-      <Filter>Shaders</Filter>
-    </None>
-    <None Include="GreenFragment.glsl">
-      <Filter>Shaders</Filter>
-    </None>
-    <None Include="BlueFragment.glsl">
+    <None Include="GeometryShader.glsl">
       <Filter>Shaders</Filter>
     </None>
   </ItemGroup>

@@ -55,6 +55,43 @@ Shader::Shader(const GLchar* VertexPath, const GLchar* FragmentPath)
 	glDeleteShader(FragmentShader);
 }
 
+Shader::Shader(const GLchar* VertexPath, const GLchar* GeometryPath, const GLchar* FragmentPath)
+{
+	*this = Shader(VertexPath, FragmentPath);
+	std::string GeormetryCode;
+	std::ifstream GShaderFile;
+
+	GShaderFile.exceptions(std::ifstream::failbit | std::ifstream::badbit);
+	try
+	{
+		GShaderFile.open(GeometryPath);
+		std::stringstream GShaderStream;
+		GShaderStream << GShaderFile.rdbuf();
+		GShaderFile.close();
+		GeormetryCode = GShaderStream.str();
+	}
+	catch (std::ifstream::failure e)
+	{
+		std::cout << "ERROR::SHADER::FILE_NOT_SUCCESFULLY_READ" << std::endl;
+	}
+	const char* gShaderCode = GeormetryCode.c_str();
+
+	//compile shaders 
+	unsigned int GeormetryShader;
+
+	//vertex shader
+	GeormetryShader = glCreateShader(GL_GEOMETRY_SHADER);
+	glShaderSource(GeormetryShader, 1, &gShaderCode, NULL);
+	glCompileShader(GeormetryShader);
+	CheckCompileErrors(GeormetryShader, "Geometry");
+
+	glAttachShader(ID, GeormetryShader);
+	glLinkProgram(ID);
+	CheckCompileErrors(ID, "Program");
+
+	glDeleteShader(GeormetryShader);
+}
+
 void Shader::Use()
 {
 	glUseProgram(ID);

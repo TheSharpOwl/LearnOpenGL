@@ -19,6 +19,7 @@ public:
 	unsigned int ID;
 
 	Shader(const GLchar* VertexPath, const GLchar* FragmentPath);
+	Shader(const GLchar* VertexPath,const GLchar* GemoetryPath, const GLchar* FragmentPath);
 
 	void Use();
 	
