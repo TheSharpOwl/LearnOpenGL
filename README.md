@@ -93,6 +93,8 @@ The glFrameBufferTexture2D has the following parameters:
  - texture: the actual texture to attach.
  - level: the mipmap level. We keep this at 0.
 
+21. [What is a divisior in instancing and how it works ?](https://stackoverflow.com/questions/31398169/how-attribute-divisor-works-with-indexed-drawing) 
+
 ## Issues I had :
 
 1. Importing Assimp was not compiling at first then I got linking errors (At the end I got .dll not found then solved also)
