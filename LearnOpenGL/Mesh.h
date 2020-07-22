@@ -39,9 +39,9 @@ public:
 	Mesh(std::vector<Vertex> vertices, std::vector<unsigned int> indecies, std::vector<Texture> textures);
 	void Draw(Shader shader);
 
-private:
-	/*render data*/
+	/*render data*/ // I put then public for the planet and rock instancing example
 	unsigned int VAO, VBO, EBO;
+private:
 	/*functions*/
 	void setupMesh();
 };

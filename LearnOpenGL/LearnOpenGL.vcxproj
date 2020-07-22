@@ -149,6 +149,8 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="..\README.md" />
+    <None Include="asteroidFragment.glsl" />
+    <None Include="asteroidVertex.glsl" />
     <None Include="DefaultFragment.glsl" />
     <None Include="DefaultVertex.glsl" />
     <None Include="FragmentShader.glsl" />

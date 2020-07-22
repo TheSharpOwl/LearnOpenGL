@@ -29,11 +29,12 @@ public:
 
 	void Draw(Shader shader);
 
+	// made public for instancing planet and asteroids example
+	std::vector<Mesh> meshes;
+	std::vector<Texture> textures_loaded;
 
 private:
 
-	std::vector<Texture> textures_loaded;
-	std::vector<Mesh> meshes;
 	std::string directory;
 
 	void loadModel(std::string path);
