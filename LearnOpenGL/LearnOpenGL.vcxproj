@@ -85,7 +85,7 @@
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
-      <AdditionalDependencies>%(AdditionalDependencies);$(SolutionDir)Dependencies\GLEW\lib\Release\Win32\glew32.lib;$(SolutionDir)Dependencies\GLFW\lib-vc2019\glfw3.lib;$(SolutionDir)Dependencies\ASSIMP\lib\assimp-vc142-mtd.lib</AdditionalDependencies>
+      <AdditionalDependencies>%(AdditionalDependencies);$(SolutionDir)Dependencies\FREETYPE\lib\freetype.lib;$(SolutionDir)Dependencies\GLEW\lib\Release\Win32\glew32.lib;$(SolutionDir)Dependencies\GLFW\lib-vc2019\glfw3.lib;$(SolutionDir)Dependencies\ASSIMP\lib\assimp-vc142-mtd.lib</AdditionalDependencies>
       <AdditionalLibraryDirectories>$(SolutionDir)Dependencies\ASSIMP\lib;$(SolutionDir)Dependencies\FREETYPE\lib;$(SolutionDir)Dependencies\GLFW\lib-vc2019;$(SolutionDir)Dependencies\GLEW\lib\Release\Win00000000000000000000000000000000000000000000000000000000000000000000000000000000032</AdditionalLibraryDirectories>
     </Link>
   </ItemDefinitionGroup>
@@ -100,7 +100,7 @@
     <Link>
       <SubSystem>Console</SubSystem>
       <AdditionalLibraryDirectories>$(SolutionDir)Dependencies\ASSIMP\lib;$(SolutionDir)Dependencies\FREETYPE\lib;$(SolutionDir)Dependencies\GLFW\lib-vc2019;$(SolutionDir)Dependencies\GLEW\lib\Release\Win00000000000000000000000000000000000000000000000000000000000000000000000000000000032</AdditionalLibraryDirectories>
-      <AdditionalDependencies>%(AdditionalDependencies);$(SolutionDir)\Dependencies\GLEW\lib\Release\Win32\glew32.lib;$(SolutionDir)\Dependencies\GLFW\lib-vc2019\glfw3.lib;$(SolutionDir)\Dependencies\ASSIMP\lib\assimp-vc142-mtd.lib</AdditionalDependencies>
+      <AdditionalDependencies>%(AdditionalDependencies);$(SolutionDir)Dependencies\FREETYPE\lib\freetype.lib;$(SolutionDir)\Dependencies\GLEW\lib\Release\Win32\glew32.lib;$(SolutionDir)\Dependencies\GLFW\lib-vc2019\glfw3.lib;$(SolutionDir)\Dependencies\ASSIMP\lib\assimp-vc142-mtd.lib</AdditionalDependencies>
     </Link>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
@@ -117,7 +117,7 @@
       <SubSystem>Console</SubSystem>
       <EnableCOMDATFolding>true</EnableCOMDATFolding>
       <OptimizeReferences>true</OptimizeReferences>
-      <AdditionalDependencies>%(AdditionalDependencies);$(SolutionDir)Dependencies\GLEW\lib\Release\Win32\glew32.lib;$(SolutionDir)Dependencies\GLFW\lib-vc2019\glfw3.lib;$(SolutionDir)Dependencies\ASSIMP\lib\assimp-vc142-mtd.lib</AdditionalDependencies>
+      <AdditionalDependencies>%(AdditionalDependencies);$(SolutionDir)Dependencies\FREETYPE\lib\freetype.lib;$(SolutionDir)Dependencies\GLEW\lib\Release\Win32\glew32.lib;$(SolutionDir)Dependencies\GLFW\lib-vc2019\glfw3.lib;$(SolutionDir)Dependencies\ASSIMP\lib\assimp-vc142-mtd.lib</AdditionalDependencies>
       <AdditionalLibraryDirectories>$(SolutionDir)Dependencies\ASSIMP\lib;$(SolutionDir)Dependencies\FREETYPE\lib;$(SolutionDir)Dependencies\GLFW\lib-vc2019;$(SolutionDir)Dependencies\GLEW\lib\Release\Win00000000000000000000000000000000000000000000000000000000000000000000000000000000032</AdditionalLibraryDirectories>
     </Link>
   </ItemDefinitionGroup>
@@ -136,7 +136,7 @@
       <EnableCOMDATFolding>true</EnableCOMDATFolding>
       <OptimizeReferences>true</OptimizeReferences>
       <AdditionalLibraryDirectories>$(SolutionDir)Dependencies\ASSIMP\lib;$(SolutionDir)Dependencies\FREETYPE\lib;$(SolutionDir)Dependencies\GLFW\lib-vc2019;$(SolutionDir)Dependencies\GLEW\lib\Release\Win00000000000000000000000000000000000000000000000000000000000000000000000000000000032</AdditionalLibraryDirectories>
-      <AdditionalDependencies>%(AdditionalDependencies);$(SolutionDir)\Dependencies\GLEW\lib\Release\Win32\glew32.lib;$(SolutionDir)\Dependencies\GLFW\lib-vc2019\glfw3.lib;$(SolutionDir)\Dependencies\ASSIMP\lib\assimp-vc142-mtd.lib</AdditionalDependencies>
+      <AdditionalDependencies>%(AdditionalDependencies);$(SolutionDir)Dependencies\FREETYPE\lib\freetype.lib;$(SolutionDir)\Dependencies\GLEW\lib\Release\Win32\glew32.lib;$(SolutionDir)\Dependencies\GLFW\lib-vc2019\glfw3.lib;$(SolutionDir)\Dependencies\ASSIMP\lib\assimp-vc142-mtd.lib</AdditionalDependencies>
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
