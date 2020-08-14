@@ -60,6 +60,12 @@
     <None Include="asteroidFragment.glsl">
       <Filter>Shaders</Filter>
     </None>
+    <None Include="text.vs">
+      <Filter>Shaders</Filter>
+    </None>
+    <None Include="text.fs">
+      <Filter>Shaders</Filter>
+    </None>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Shader.h">
